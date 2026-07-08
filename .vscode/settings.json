@@ -1,0 +1,11 @@
+{
+    "csharp-dev-tools.entityFramework.migrationPreferences": {
+        "Authentication.sln": {
+            "startupProject": "Naxxum.JobyHunter.Authentication.Api\\Authentication.Api.csproj",
+            "migrationsProject": "Naxxum.JobyHunter.Authentication.Infrastructure\\Authentication.Infra.csproj",
+            "dbContextClass": "ApplicationDbContext",
+            "migrationsFolder": "Migrations",
+            "targetMigration": "Intial-Create"
+        }
+    }
+}
