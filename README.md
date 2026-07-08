@@ -1,1 +1,20 @@
-# ASP.NET-Core-CleanArchitecture-CQRS-Identity
+# The-Abstraction-Server
+- Công nghệ sử dụng
+  - ASP.NET Core 8.0
+  - C#
+  - Clean Architecture
+  - CQRS Pattern
+  - Identity (Role and User Management)
+  - SQL Server
+  - Dapper
+  - Entity Framework
+  - AutoMapper
+  - MediatR
+  - JWT Authentication and Authorization
+- Dự án cung cấp các API cho các ứng dụng như web, app, Unity...
+- định hướng sẽ là một hệ sinh thái với CSDL khổng lồ bao gồm nhiều dịch vụ
+  - Hệ thống quản lý bán hàng về các sản phẩm decor nhà cửa
+  - mạng xã hội nhỏ chia sẻ về phong cách sống, tối ưu cuộc sống, đồ dùng, trang trí,...
+  - trò chơi Indie
+  - Quản lý cho thuê HomeStay
+  - Quản lý dịch vụ thú cưng
