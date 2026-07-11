@@ -3,6 +3,7 @@ using TheAbstraction.Application.DTOs;
 using TheAbstraction.Domain.Entities;
 using TheAbstraction.Infra.Data;
 using Microsoft.EntityFrameworkCore;
+using TheAbstraction.Application.Commands.ProductVariant.Create;
 
 namespace TheAbstraction.Infra.Services
 {
@@ -20,6 +21,7 @@ namespace TheAbstraction.Infra.Services
             string description,
             int stockQuantity,
             bool isActive,
+            List<CreateProductVariantCommand> productVariants,
             CancellationToken cancellationToken = default)
         {
             var product = new Product
@@ -30,7 +32,22 @@ namespace TheAbstraction.Infra.Services
                 IsActive = isActive
             };
 
+
             _context.Products.Add(product);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            foreach (var productVariant in productVariants) 
+            {
+                _context.ProductVariants.Add(new ProductVariant
+                {
+                    ProductId = product.Id,
+                    Price = productVariant.Price,
+                    Quantity = productVariant.Quantity,
+                    Model = productVariant.Model,
+                    Color = productVariant.Color,
+                    Size = productVariant.Size
+                });
+            }
 
             return await _context.SaveChangesAsync(cancellationToken);
         }
@@ -63,6 +80,8 @@ namespace TheAbstraction.Infra.Services
             }
 
             _context.Products.Remove(product);
+            _context.ProductVariants.Where(x => x.ProductId == id).ToList()
+                .ForEach(x => _context.ProductVariants.Remove(x));
 
             return await _context.SaveChangesAsync(cancellationToken);
         }

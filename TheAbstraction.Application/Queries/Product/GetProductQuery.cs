@@ -8,11 +8,11 @@ namespace TheAbstraction.Application.Queries.Product
     {
     }
 
-    public class GetAllProductsQueryHandler : IRequestHandler<GetProductQuery, IReadOnlyList<ProductResponseDTO>>
+    public class GetProductsQueryHandler : IRequestHandler<GetProductQuery, IReadOnlyList<ProductResponseDTO>>
     {
         private readonly IProductService _productService;
 
-        public GetAllProductsQueryHandler(IProductService productService)
+        public GetProductsQueryHandler(IProductService productService)
         {
             _productService = productService;
         }
