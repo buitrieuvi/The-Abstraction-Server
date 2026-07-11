@@ -1,4 +1,8 @@
-﻿using TheAbstraction.Application.Common.Interfaces;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Domain.Repositories.Command.Base;
 using TheAbstraction.Domain.Repositories.Query.Base;
 using TheAbstraction.Infra.Data;
@@ -6,12 +10,6 @@ using TheAbstraction.Infra.Identity;
 using TheAbstraction.Infra.Repository.Command.Base;
 using TheAbstraction.Infra.Repository.Query.Base;
 using TheAbstraction.Infra.Services;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
 
 namespace TheAbstraction.Infra
 {
@@ -49,6 +47,7 @@ namespace TheAbstraction.Infra
 
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductVariantService, ProductVariantService>();
 
             services.AddScoped(typeof(IQueryRepository<>), typeof(QueryRepository<>));
             services.AddScoped(typeof(ICommandRepository<>), typeof(CommandRepository<>));

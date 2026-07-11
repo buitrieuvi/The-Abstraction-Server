@@ -5,7 +5,7 @@ namespace TheAbstraction.Application.Commands.Product.Delete
 {
     public class DeleteProductCommand : IRequest<int>
     {
-        public string Id { get; set; }
+        public string Id { get; set; } 
     }
 
     public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, int>
@@ -19,8 +19,7 @@ namespace TheAbstraction.Application.Commands.Product.Delete
 
         public async Task<int> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
-            var result = await _productService.DeleteAsync(request.Id, cancellationToken);
-            return result ? 1 : 0;
+            return await _productService.DeleteAsync(request.Id, cancellationToken);
         }
     }
 }

@@ -6,6 +6,13 @@
             "dbContextClass": "ApplicationDbContext",
             "migrationsFolder": "Migrations",
             "targetMigration": "Intial-Create"
+        },
+        "The-Abstraction-Server.sln": {
+            "startupProject": "TheAbstraction.Api\\TheAbstraction.Api.csproj",
+            "migrationsProject": "TheAbstraction.Infrastructure\\TheAbstraction.Infra.csproj",
+            "dbContextClass": "",
+            "migrationsFolder": "Migrations",
+            "targetMigration": "Intial-Create"
         }
     }
 }

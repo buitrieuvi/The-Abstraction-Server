@@ -17,8 +17,7 @@ namespace TheAbstraction.Infra.Services
 
         public async Task<int> CreateAsync(
             string name,
-            string? description,
-            decimal price,
+            string description,
             int stockQuantity,
             bool isActive,
             CancellationToken cancellationToken = default)
@@ -27,7 +26,6 @@ namespace TheAbstraction.Infra.Services
             {
                 Name = name,
                 Description = description,
-                Price = price,
                 StockQuantity = stockQuantity,
                 IsActive = isActive
             };
@@ -37,7 +35,38 @@ namespace TheAbstraction.Infra.Services
             return await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<ProductResponseDTO?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<int> UpdateAsync(string id, string name, string description, int stockQuantity, bool isActive, CancellationToken cancellationToken = default)
+        {
+            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            if (product is null)
+            {
+                return 0;
+            }
+            product.Name = name;
+            product.Description = description;
+            product.StockQuantity = stockQuantity;
+            product.IsActive = isActive;
+            product.ModifiedDate = DateTime.UtcNow;
+
+            var result = _context.Products.Update(product);
+            
+            
+            return await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<int> DeleteAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            if (product is null)
+            {
+                return 0;
+            }
+
+            _context.Products.Remove(product);
+
+            return await _context.SaveChangesAsync(cancellationToken);
+        }
+        public async Task<ProductResponseDTO> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
             var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             return product is null ? null : MapToDto(product);
@@ -52,39 +81,6 @@ namespace TheAbstraction.Infra.Services
             return products.Select(MapToDto).ToList();
         }
 
-        public async Task<bool> UpdateAsync(string id, string name, string? description, decimal price, int stockQuantity, bool isActive, CancellationToken cancellationToken = default)
-        {
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-            if (product is null)
-            {
-                return false;
-            }
-            product.Name = name;
-            product.Description = description;
-            product.Price = price;
-            product.StockQuantity = stockQuantity;
-            product.IsActive = isActive;
-            product.ModifiedDate = DateTime.UtcNow;
-
-            var result = _context.Products.Update(product);
-            
-            await _context.SaveChangesAsync(cancellationToken);
-            return true;
-        }
-
-        public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default)
-        {
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-            if (product is null)
-            {
-                return false;
-            }
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync(cancellationToken);
-            return true;
-        }
-
         private static ProductResponseDTO MapToDto(Product product)
         {
             return new ProductResponseDTO
@@ -92,7 +88,6 @@ namespace TheAbstraction.Infra.Services
                 Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
-                Price = product.Price,
                 StockQuantity = product.StockQuantity,
                 IsActive = product.IsActive,
                 CreatedDate = product.CreatedDate,
@@ -100,4 +95,6 @@ namespace TheAbstraction.Infra.Services
             };
         }
     }
+
+
 }

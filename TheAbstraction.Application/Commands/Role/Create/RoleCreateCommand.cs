@@ -6,7 +6,7 @@ namespace TheAbstraction.Application.Commands.Role.Create
 {
     public class RoleCreateCommand : IRequest<int>
     {
-        public string RoleName { get; set; }
+        public string RoleName { get; set; } 
     }
 
     public class RoleCreateCommandHandler : IRequestHandler<RoleCreateCommand, int>
