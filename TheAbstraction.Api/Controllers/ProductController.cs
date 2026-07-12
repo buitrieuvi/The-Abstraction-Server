@@ -1,10 +1,10 @@
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using TheAbstraction.Application.Commands.Product.Create;
 using TheAbstraction.Application.Commands.Product.Delete;
 using TheAbstraction.Application.Commands.Product.Update;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Application.Queries.Product;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
 namespace TheAbstraction.Api.Controllers
 {
@@ -31,6 +31,13 @@ namespace TheAbstraction.Api.Controllers
         public async Task<IActionResult> GetRoleByIdAsync(string id)
         {
             return Ok(await _mediator.Send(new GetProductByIdQuery() { Id = id }));
+        }
+
+        [HttpGet("GetByName/{name}")]
+        [ProducesDefaultResponseType(typeof(List<ProductResponseDTO>))]
+        public async Task<IActionResult> GetProductByNameAsync(string name)
+        {
+            return Ok(await _mediator.Send(new GetProductByNameQuery() { Name = name }));
         }
 
         [HttpPost("Create")]

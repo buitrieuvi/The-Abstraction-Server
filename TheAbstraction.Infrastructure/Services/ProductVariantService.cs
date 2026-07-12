@@ -60,7 +60,7 @@ namespace TheAbstraction.Infra.Services
         {
             var productVariants = await _context.ProductVariants
                 .Where(pv => pv.ProductId == productId)
-                .ToListAsync(cancellationToken); 
+                .ToListAsync(cancellationToken);
 
             return productVariants.Select(pv => new ProductVariantResponseDTO
             {
@@ -73,6 +73,24 @@ namespace TheAbstraction.Infra.Services
                 Size = pv.Size
             }).ToList();
 
+        }
+
+        public async Task<int> UpdateProductVariantAsync(string id, decimal price, int quantity, bool isActive,
+         string model, string color, string size, CancellationToken cancellationToken = default)
+        {
+            var productVariant = await _context.ProductVariants.FirstOrDefaultAsync(pv => pv.Id == id, cancellationToken);
+
+            if (productVariant != null)
+            {
+                productVariant.Price = price;
+                productVariant.Quantity = quantity;
+                productVariant.IsActive = isActive;
+                productVariant.Model = model;
+                productVariant.Color = color;
+                productVariant.Size = size;
+            }
+
+            return await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

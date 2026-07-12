@@ -1,6 +1,6 @@
+using MediatR;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
-using MediatR;
 
 namespace TheAbstraction.Application.Queries.Product
 {

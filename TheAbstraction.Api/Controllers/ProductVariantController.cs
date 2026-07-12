@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TheAbstraction.Application.Commands.ProductVariant.Create;
 using TheAbstraction.Application.Commands.ProductVariant.Delete;
+using TheAbstraction.Application.Commands.ProductVariant.Update;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Application.Queries.ProductVariant;
 
@@ -46,6 +47,22 @@ namespace TheAbstraction.Api.Controllers
         {
             var result = await _mediator.Send(new DeleteProductVariantCommand() { Id = id });
             return Ok(result);
+        }
+
+        [HttpPut("Edit/{id}")]
+        [ProducesDefaultResponseType(typeof(int))]
+        public async Task<ActionResult> EditProductVariant(string id, [FromBody] UpdateProductVariantCommand command)
+        {
+
+            if (id == command.Id)
+            {
+                var result = await _mediator.Send(command);
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

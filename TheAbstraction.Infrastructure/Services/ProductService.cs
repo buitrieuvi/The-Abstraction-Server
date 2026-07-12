@@ -1,9 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using TheAbstraction.Application.Commands.ProductVariant.Create;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Domain.Entities;
 using TheAbstraction.Infra.Data;
-using Microsoft.EntityFrameworkCore;
-using TheAbstraction.Application.Commands.ProductVariant.Create;
 
 namespace TheAbstraction.Infra.Services
 {
@@ -36,7 +36,7 @@ namespace TheAbstraction.Infra.Services
             _context.Products.Add(product);
             await _context.SaveChangesAsync(cancellationToken);
 
-            foreach (var productVariant in productVariants) 
+            foreach (var productVariant in productVariants)
             {
                 _context.ProductVariants.Add(new ProductVariant
                 {
@@ -66,8 +66,8 @@ namespace TheAbstraction.Infra.Services
             product.ModifiedDate = DateTime.UtcNow;
 
             var result = _context.Products.Update(product);
-            
-            
+
+
             return await _context.SaveChangesAsync(cancellationToken);
         }
 
@@ -112,6 +112,16 @@ namespace TheAbstraction.Infra.Services
                 CreatedDate = product.CreatedDate,
                 ModifiedDate = product.ModifiedDate
             };
+        }
+
+        public async Task<IReadOnlyList<ProductResponseDTO>> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+        {
+            var products = await _context.Products
+                .Where(x => x.Name.Contains(name))
+                .OrderBy(x => x.Name)
+                .ToListAsync(cancellationToken);
+
+            return products.Select(MapToDto).ToList();
         }
     }
 
