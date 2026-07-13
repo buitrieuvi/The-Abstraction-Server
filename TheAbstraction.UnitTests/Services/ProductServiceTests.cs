@@ -51,8 +51,10 @@ public class ProductServiceTests
     public async Task ProductService_Delete_Product()
     {
         // Arrange
-        var sut = new ProductService(_context);
-
+        var sut = new ProductVariantService(_context);
+        await sut.DeleteProductVariantAsync("62a6394d-a031-44d8-ad38-ebaceaa49d37", default);
+        await sut.DeleteProductVariantAsync("dd3666f3-4b01-4486-acdc-04bb04ff3d27", default);
+        await sut.DeleteProductVariantAsync("f035f942-b99c-4269-a218-e7b033d0ad67", default);
 
     }
 }

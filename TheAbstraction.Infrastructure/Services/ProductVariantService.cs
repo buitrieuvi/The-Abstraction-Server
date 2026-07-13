@@ -36,6 +36,18 @@ namespace TheAbstraction.Infra.Services
             if (productVariant != null)
             {
                 _context.ProductVariants.Remove(productVariant);
+                await _context.SaveChangesAsync(cancellationToken);
+                
+                int c = _context.ProductVariants.Where(p => p.ProductId == productVariant.ProductId).Count();
+                if (c == 0)
+                {
+                    var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productVariant.ProductId, cancellationToken);
+                    if (product != null)
+                    {
+                        _context.Products.Remove(product);
+                    }
+                }
+
             }
             return await _context.SaveChangesAsync(cancellationToken);
         }
@@ -91,6 +103,12 @@ namespace TheAbstraction.Infra.Services
             }
 
             return await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        private async Task<int> CountProductVariantByIdAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var count = await _context.ProductVariants.CountAsync(pv => pv.ProductId == id, cancellationToken);
+            return count;
         }
     }
 }

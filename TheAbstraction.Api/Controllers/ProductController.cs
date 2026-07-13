@@ -47,6 +47,18 @@ namespace TheAbstraction.Api.Controllers
             return Ok(await _mediator.Send(command));
         }
 
+        [HttpPost("CreateRange")]
+        [ProducesDefaultResponseType(typeof(int))]
+        public async Task<ActionResult<int>> CreateRange([FromBody] List<CreateProductCommand> command)
+        {
+            foreach (var item in command)
+            {
+                await _mediator.Send(item);
+            }
+
+            return Ok(1);
+        }
+
 
         [HttpDelete("Delete/{id}")]
         [ProducesDefaultResponseType(typeof(int))]
