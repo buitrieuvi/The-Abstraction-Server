@@ -12,6 +12,7 @@ namespace TheAbstraction.Api.Controllers
     [ApiController]
     public class ProductController(IMediator mediator) : ControllerBase
     {
+        // tiếp tục hoàn thành sản phẩm và người dùng
         private readonly IMediator _mediator = mediator;
 
         [HttpGet("GetAll")]
