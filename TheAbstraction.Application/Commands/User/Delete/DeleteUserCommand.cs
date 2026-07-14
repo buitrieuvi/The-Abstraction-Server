@@ -13,14 +13,10 @@ namespace TheAbstraction.Application.Commands.User.Delete
         public string Id { get; set; }
     }
 
-    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, int>
+    public class DeleteUserCommandHandler(IIdentityService identityService) : IRequestHandler<DeleteUserCommand, int>
     {
-        private readonly IIdentityService _identityService;
+        private readonly IIdentityService _identityService = identityService;
 
-        public DeleteUserCommandHandler(IIdentityService identityService)
-        {
-            _identityService = identityService;
-        }
         public async Task<int> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
             var result = await _identityService.DeleteUserAsync(request.Id);

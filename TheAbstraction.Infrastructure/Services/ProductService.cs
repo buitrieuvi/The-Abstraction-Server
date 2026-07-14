@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TheAbstraction.Application.Commands.ProductVariant.Create;
+using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Domain.Entities;
@@ -7,19 +8,13 @@ using TheAbstraction.Infra.Data;
 
 namespace TheAbstraction.Infra.Services
 {
-    public class ProductService : IProductService
+    public class ProductService(ApplicationDbContext context) : IProductService
     {
-        private readonly ApplicationDbContext _context;
-
-        public ProductService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         public async Task<int> CreateAsync(
             string name,
             string description,
-            int stockQuantity,
             bool isActive,
             List<CreateProductVariantCommand> productVariants,
             CancellationToken cancellationToken = default)
@@ -28,7 +23,6 @@ namespace TheAbstraction.Infra.Services
             {
                 Name = name,
                 Description = description,
-                StockQuantity = stockQuantity,
                 IsActive = isActive
             };
 
@@ -52,7 +46,7 @@ namespace TheAbstraction.Infra.Services
             return await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<int> UpdateAsync(string id, string name, string description, int stockQuantity, bool isActive, CancellationToken cancellationToken = default)
+        public async Task<int> UpdateAsync(string id, string name, string description, bool isActive, CancellationToken cancellationToken = default)
         {
             var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             if (product is null)
@@ -61,7 +55,6 @@ namespace TheAbstraction.Infra.Services
             }
             product.Name = name;
             product.Description = description;
-            product.StockQuantity = stockQuantity;
             product.IsActive = isActive;
             product.ModifiedDate = DateTime.UtcNow;
 
@@ -87,8 +80,8 @@ namespace TheAbstraction.Infra.Services
         }
         public async Task<ProductResponseDTO> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-            return product is null ? null : MapToDto(product);
+            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken) ?? throw new NotFoundException("Không tìm thấy sản phẩm");
+            return MapToDto(product);
         }
 
         public async Task<IReadOnlyList<ProductResponseDTO>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -97,22 +90,18 @@ namespace TheAbstraction.Infra.Services
                 .OrderBy(x => x.Name)
                 .ToListAsync(cancellationToken);
 
-            return products.Select(MapToDto).ToList();
+            return [.. products.Select(MapToDto)];
         }
 
-        private static ProductResponseDTO MapToDto(Product product)
+        private static ProductResponseDTO MapToDto(Product product) => new()
         {
-            return new ProductResponseDTO
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                StockQuantity = product.StockQuantity,
-                IsActive = product.IsActive,
-                CreatedDate = product.CreatedDate,
-                ModifiedDate = product.ModifiedDate
-            };
-        }
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            IsActive = product.IsActive,
+            CreatedDate = product.CreatedDate,
+            ModifiedDate = product.ModifiedDate
+        };
 
         public async Task<IReadOnlyList<ProductResponseDTO>> GetByNameAsync(string name, CancellationToken cancellationToken = default)
         {
@@ -121,9 +110,8 @@ namespace TheAbstraction.Infra.Services
                 .OrderBy(x => x.Name)
                 .ToListAsync(cancellationToken);
 
-            return products.Select(MapToDto).ToList();
+            return [.. products.Select(MapToDto)];
         }
     }
-
 
 }

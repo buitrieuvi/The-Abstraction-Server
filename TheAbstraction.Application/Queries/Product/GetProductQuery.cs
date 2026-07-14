@@ -4,22 +4,15 @@ using TheAbstraction.Application.DTOs;
 
 namespace TheAbstraction.Application.Queries.Product
 {
-    public class GetProductQuery : IRequest<IReadOnlyList<ProductResponseDTO>>
+    public class GetProductQuery : IRequest<IReadOnlyList<ProductResponseDTO>>;
+
+    public class GetProductsQueryHandler(IProductService productService) : IRequestHandler<GetProductQuery, IReadOnlyList<ProductResponseDTO>>
     {
-    }
+        private readonly IProductService _productService = productService;
 
-    public class GetProductsQueryHandler : IRequestHandler<GetProductQuery, IReadOnlyList<ProductResponseDTO>>
-    {
-        private readonly IProductService _productService;
-
-        public GetProductsQueryHandler(IProductService productService)
+        public Task<IReadOnlyList<ProductResponseDTO>> Handle(GetProductQuery request, CancellationToken cancellationToken)
         {
-            _productService = productService;
-        }
-
-        public async Task<IReadOnlyList<ProductResponseDTO>> Handle(GetProductQuery request, CancellationToken cancellationToken)
-        {
-            return await _productService.GetAllAsync(cancellationToken);
+            return _productService.GetAllAsync(cancellationToken);
         }
     }
 }

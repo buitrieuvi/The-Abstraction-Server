@@ -14,14 +14,9 @@ public class UpdateProductVariantCommand : IRequest<int>
     public string Size { get; set; }
 }
 
-public class UpdateProductVariantCommandHandler : IRequestHandler<UpdateProductVariantCommand, int>
+public class UpdateProductVariantCommandHandler(IProductVariantService productVariantService) : IRequestHandler<UpdateProductVariantCommand, int>
 {
-    private readonly IProductVariantService _productVariantService;
-
-    public UpdateProductVariantCommandHandler(IProductVariantService productVariantService)
-    {
-        _productVariantService = productVariantService;
-    }
+    private readonly IProductVariantService _productVariantService = productVariantService;
 
     public async Task<int> Handle(UpdateProductVariantCommand request, CancellationToken cancellationToken)
     {

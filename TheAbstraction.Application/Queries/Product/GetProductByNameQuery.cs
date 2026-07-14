@@ -6,21 +6,16 @@ namespace TheAbstraction.Application.Queries.Product
 {
     public class GetProductByNameQuery : IRequest<IReadOnlyList<ProductResponseDTO>>
     {
-        public string Name { get; set; } 
+        public string Name { get; set; }
     }
 
-    public class GetProductByNameQueryHandler : IRequestHandler<GetProductByNameQuery, IReadOnlyList<ProductResponseDTO>>
+    public class GetProductByNameQueryHandler(IProductService productService) : IRequestHandler<GetProductByNameQuery, IReadOnlyList<ProductResponseDTO>>
     {
-        private readonly IProductService _productService;
+        private readonly IProductService _productService = productService;
 
-        public GetProductByNameQueryHandler(IProductService productService)
+        public Task<IReadOnlyList<ProductResponseDTO>> Handle(GetProductByNameQuery request, CancellationToken cancellationToken)
         {
-            _productService = productService;
-        }
-
-        public async Task<IReadOnlyList<ProductResponseDTO>> Handle(GetProductByNameQuery request, CancellationToken cancellationToken)
-        {
-            return await _productService.GetByNameAsync(request.Name, cancellationToken);
+            return _productService.GetByNameAsync(request.Name, cancellationToken);
         }
     }
 }

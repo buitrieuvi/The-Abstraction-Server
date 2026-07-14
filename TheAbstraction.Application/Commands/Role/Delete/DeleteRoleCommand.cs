@@ -10,17 +10,13 @@ namespace TheAbstraction.Application.Commands.Role.Delete
 {
     public class DeleteRoleCommand : IRequest<int>
     {
-        public string RoleId { get; set; } 
+        public string RoleId { get; set; }
     }
 
-    public class DeleteRoleCommandHandler : IRequestHandler<DeleteRoleCommand, int>
+    public class DeleteRoleCommandHandler(IIdentityService identityService) : IRequestHandler<DeleteRoleCommand, int>
     {
-        private readonly IIdentityService _identityService;
+        private readonly IIdentityService _identityService = identityService;
 
-        public DeleteRoleCommandHandler(IIdentityService identityService)
-        {
-            _identityService = identityService;
-        }
         public async Task<int> Handle(DeleteRoleCommand request, CancellationToken cancellationToken)
         {
             var result = await _identityService.DeleteRoleAsync(request.RoleId);

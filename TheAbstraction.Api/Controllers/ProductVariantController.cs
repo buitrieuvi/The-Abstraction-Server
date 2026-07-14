@@ -10,14 +10,9 @@ namespace TheAbstraction.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductVariantController : ControllerBase
+    public class ProductVariantController(IMediator mediator) : ControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public ProductVariantController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        private readonly IMediator _mediator = mediator;
 
         [HttpGet("GetAll")]
         [ProducesDefaultResponseType(typeof(List<ProductVariantResponseDTO>))]

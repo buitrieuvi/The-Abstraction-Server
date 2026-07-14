@@ -7,21 +7,13 @@ using System.Text;
 
 namespace TheAbstraction.Infra.Services
 {
-    public class TokenGenerator : ITokenGenerator
+    public class TokenGenerator(string key, string issueer, string audience, string expiryMinutes) : ITokenGenerator
     {
 
-        private readonly string _key;
-        private readonly string _issuer;
-        private readonly string _audience;
-        private readonly string _expiryMinutes;
-
-        public TokenGenerator(string key, string issueer, string audience, string expiryMinutes)
-        {
-            _key = key;
-            _issuer = issueer;
-            _audience = audience;
-            _expiryMinutes = expiryMinutes;
-        }
+        private readonly string _key = key;
+        private readonly string _issuer = issueer;
+        private readonly string _audience = audience;
+        private readonly string _expiryMinutes = expiryMinutes;
 
         public string GenerateJWTToken((string userId, string userName, IList<string> roles) userDetails)
         {
@@ -32,10 +24,10 @@ namespace TheAbstraction.Infra.Services
 
             var claims = new List<Claim>()
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userName),
-                new Claim(JwtRegisteredClaimNames.Jti, userId),
-                new Claim(ClaimTypes.Name, userName),
-                new Claim("UserId", userId)
+                new(JwtRegisteredClaimNames.Sub, userName),
+                new(JwtRegisteredClaimNames.Jti, userId),
+                new(ClaimTypes.Name, userName),
+                new("UserId", userId)
             };
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 

@@ -14,14 +14,10 @@ namespace TheAbstraction.Application.Commands.User.Update
         public IList<string> Roles { get; set; }
     }
 
-    public class UpdateUserRolesCommandHandler : IRequestHandler<UpdateUserRolesCommand, int>
+    public class UpdateUserRolesCommandHandler(IIdentityService identityService) : IRequestHandler<UpdateUserRolesCommand, int>
     {
-        private readonly IIdentityService _identityService;
+        private readonly IIdentityService _identityService = identityService;
 
-        public UpdateUserRolesCommandHandler(IIdentityService identityService)
-        {
-            _identityService = identityService;
-        }
         public async Task<int> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
         {
             var result = await _identityService.UpdateUsersRole(request.userName, request.Roles);

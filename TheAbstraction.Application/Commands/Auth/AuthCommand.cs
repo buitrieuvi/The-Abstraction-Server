@@ -14,16 +14,10 @@ namespace TheAbstraction.Application.Commands.Auth
     }
 
 
-    public class AuthCommandHandler : IRequestHandler<AuthCommand, AuthResponseDTO>
+    public class AuthCommandHandler(IIdentityService identityService, ITokenGenerator tokenGenerator) : IRequestHandler<AuthCommand, AuthResponseDTO>
     {
-        private readonly ITokenGenerator _tokenGenerator;
-        private readonly IIdentityService _identityService;
-
-        public AuthCommandHandler(IIdentityService identityService, ITokenGenerator tokenGenerator)
-        {
-            _identityService = identityService;
-            _tokenGenerator = tokenGenerator;
-        }
+        private readonly ITokenGenerator _tokenGenerator = tokenGenerator;
+        private readonly IIdentityService _identityService = identityService;
 
         public async Task<AuthResponseDTO> Handle(AuthCommand request, CancellationToken cancellationToken)
         {

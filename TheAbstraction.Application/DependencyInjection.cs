@@ -17,7 +17,6 @@ namespace TheAbstraction.Application
             services.AddMediatR(ctg =>
             {
                 ctg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-
             });
 
             return services;

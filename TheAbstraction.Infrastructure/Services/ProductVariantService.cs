@@ -6,14 +6,9 @@ using TheAbstraction.Infra.Data;
 
 namespace TheAbstraction.Infra.Services
 {
-    public class ProductVariantService : IProductVariantService
+    public class ProductVariantService(ApplicationDbContext context) : IProductVariantService
     {
-        private readonly ApplicationDbContext _context;
-
-        public ProductVariantService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         public async Task<int> CreateProductVariantAsync(string productId, decimal price, int quantity, string model, string color, string size, CancellationToken cancellationToken = default)
         {
@@ -37,7 +32,7 @@ namespace TheAbstraction.Infra.Services
             {
                 _context.ProductVariants.Remove(productVariant);
                 await _context.SaveChangesAsync(cancellationToken);
-                
+
                 int c = _context.ProductVariants.Where(p => p.ProductId == productVariant.ProductId).Count();
                 if (c == 0)
                 {
@@ -56,7 +51,7 @@ namespace TheAbstraction.Infra.Services
         {
             var productVariants = await _context.ProductVariants.ToListAsync(cancellationToken);
 
-            return productVariants.Select(pv => new ProductVariantResponseDTO
+            return [.. productVariants.Select(pv => new ProductVariantResponseDTO
             {
                 Id = pv.Id,
                 ProductId = pv.ProductId,
@@ -65,7 +60,7 @@ namespace TheAbstraction.Infra.Services
                 Model = pv.Model,
                 Color = pv.Color,
                 Size = pv.Size
-            }).ToList();
+            })];
         }
 
         public async Task<IReadOnlyList<ProductVariantResponseDTO>> GetProductVariantByProductIdAsync(string productId, CancellationToken cancellationToken = default)
@@ -74,7 +69,7 @@ namespace TheAbstraction.Infra.Services
                 .Where(pv => pv.ProductId == productId)
                 .ToListAsync(cancellationToken);
 
-            return productVariants.Select(pv => new ProductVariantResponseDTO
+            return [.. productVariants.Select(pv => new ProductVariantResponseDTO
             {
                 Id = pv.Id,
                 ProductId = pv.ProductId,
@@ -83,7 +78,7 @@ namespace TheAbstraction.Infra.Services
                 Model = pv.Model,
                 Color = pv.Color,
                 Size = pv.Size
-            }).ToList();
+            })];
 
         }
 
@@ -105,10 +100,10 @@ namespace TheAbstraction.Infra.Services
             return await _context.SaveChangesAsync(cancellationToken);
         }
 
-        private async Task<int> CountProductVariantByIdAsync(string id, CancellationToken cancellationToken = default)
-        {
-            var count = await _context.ProductVariants.CountAsync(pv => pv.ProductId == id, cancellationToken);
-            return count;
-        }
+        // private async Task<int> CountProductVariantByIdAsync(string id, CancellationToken cancellationToken = default)
+        // {
+        //     var count = await _context.ProductVariants.CountAsync(pv => pv.ProductId == id, cancellationToken);
+        //     return count;
+        // }
     }
 }

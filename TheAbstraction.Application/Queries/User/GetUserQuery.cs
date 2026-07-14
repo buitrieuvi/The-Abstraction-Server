@@ -13,14 +13,9 @@ namespace TheAbstraction.Application.Queries.User
     {
     }
 
-    public class GetUserQueryHandler : IRequestHandler<GetUserQuery, List<UserResponseDTO>>
+    public class GetUserQueryHandler(IIdentityService identityService) : IRequestHandler<GetUserQuery, List<UserResponseDTO>>
     {
-        private readonly IIdentityService _identityService;
-
-        public GetUserQueryHandler(IIdentityService identityService)
-        {
-            _identityService = identityService;
-        }
+        private readonly IIdentityService _identityService = identityService;
 
         public async Task<List<UserResponseDTO>> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {

@@ -18,13 +18,10 @@ namespace TheAbstraction.Application.Commands.User.Create
         public List<string> Roles { get; set; }
     }
 
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, int>
+    public class CreateUserCommandHandler(IIdentityService identityService) : IRequestHandler<CreateUserCommand, int>
     {
-        private readonly IIdentityService _identityService;
-        public CreateUserCommandHandler(IIdentityService identityService)
-        {
-            _identityService = identityService;
-        }
+        private readonly IIdentityService _identityService = identityService;
+
         public async Task<int> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var result = await _identityService.CreateUserAsync(request.UserName, request.Password, request.Email, request.FullName, request.Roles);

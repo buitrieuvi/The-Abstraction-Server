@@ -5,15 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TheAbstraction.Infra.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions) : IdentityDbContext<ApplicationUser>(dbContextOptions)
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions)
-            : base(dbContextOptions)
-        {
-        }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

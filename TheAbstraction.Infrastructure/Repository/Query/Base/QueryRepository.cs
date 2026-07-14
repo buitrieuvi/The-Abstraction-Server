@@ -5,14 +5,9 @@ using System.Linq.Expressions;
 
 namespace TheAbstraction.Infra.Repository.Query.Base
 {
-    public class QueryRepository<T> : IQueryRepository<T> where T : class
+    public class QueryRepository<T>(ApplicationDbContext context) : IQueryRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _context;
-
-        public QueryRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         public async Task<T?> GetByIdAsync(object id)
         {

@@ -14,14 +14,10 @@ namespace TheAbstraction.Application.Queries.Role
 
     }
 
-    public class GetRoleQueryHandler : IRequestHandler<GetRoleQuery, IList<RoleResponseDTO>>
+    public class GetRoleQueryHandler(IIdentityService identityService) : IRequestHandler<GetRoleQuery, IList<RoleResponseDTO>>
     {
-        private readonly IIdentityService _identityService;
+        private readonly IIdentityService _identityService = identityService;
 
-        public GetRoleQueryHandler(IIdentityService identityService)
-        {
-            _identityService = identityService;
-        }
         public async Task<IList<RoleResponseDTO>> Handle(GetRoleQuery request, CancellationToken cancellationToken)
         {
             var roles = await _identityService.GetRolesAsync();

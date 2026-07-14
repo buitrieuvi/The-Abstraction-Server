@@ -10,14 +10,9 @@ namespace TheAbstraction.Application.Queries.ProductVariant
 
     }
 
-    public class GetProductVariantQueryHandler : IRequestHandler<GetProductVariantQuery, IReadOnlyList<ProductVariantResponseDTO>>
+    public class GetProductVariantQueryHandler(IProductVariantService productVariantService) : IRequestHandler<GetProductVariantQuery, IReadOnlyList<ProductVariantResponseDTO>>
     {
-        private readonly IProductVariantService _productVariantService;
-
-        public GetProductVariantQueryHandler(IProductVariantService productVariantService)
-        {
-            _productVariantService = productVariantService;
-        }
+        private readonly IProductVariantService _productVariantService = productVariantService;
 
         public async Task<IReadOnlyList<ProductVariantResponseDTO>> Handle(GetProductVariantQuery request, CancellationToken cancellationToken)
         {

@@ -25,12 +25,7 @@ namespace TheAbstraction.Infra.Services
 
         public async Task<bool> AssignUserToRole(string userName, IList<string> roles)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName);
-            if (user == null)
-            {
-                throw new NotFoundException("User not found");
-            }
-
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName) ?? throw new NotFoundException("User not found");
             var result = await _userManager.AddToRolesAsync(user, roles);
             return result.Succeeded;
         }
@@ -73,12 +68,7 @@ namespace TheAbstraction.Infra.Services
 
         public async Task<bool> DeleteRoleAsync(string roleId)
         {
-            var roleDetails = await _roleManager.FindByIdAsync(roleId);
-            if (roleDetails == null)
-            {
-                throw new NotFoundException("Role not found");
-            }
-
+            var roleDetails = await _roleManager.FindByIdAsync(roleId) ?? throw new NotFoundException("Role not found");
             if (roleDetails.Name == "Administrator")
             {
                 throw new BadRequestException("You can not delete Administrator Role");
@@ -93,13 +83,7 @@ namespace TheAbstraction.Infra.Services
 
         public async Task<bool> DeleteUserAsync(string userId)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            if (user == null)
-            {
-                throw new NotFoundException("User not found");
-                //throw new Exception("User not found");
-            }
-
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId) ?? throw new NotFoundException("User not found");
             if (user.UserName == "system" || user.UserName == "admin")
             {
                 throw new Exception("You can not delete system or admin user");
@@ -145,67 +129,40 @@ namespace TheAbstraction.Infra.Services
 
         public async Task<(string userId, string fullName, string UserName, string email, IList<string> roles)> GetUserDetailsAsync(string userId)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            if (user == null)
-            {
-                throw new NotFoundException("User not found");
-            }
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId) ?? throw new NotFoundException("User not found");
             var roles = await _userManager.GetRolesAsync(user);
             return (user.Id, user.FullName, user.UserName, user.Email, roles);
         }
 
         public async Task<(string userId, string fullName, string UserName, string email, IList<string> roles)> GetUserDetailsByUserNameAsync(string userName)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName);
-            if (user == null)
-            {
-                throw new NotFoundException("User not found");
-            }
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName) ?? throw new NotFoundException("User not found");
             var roles = await _userManager.GetRolesAsync(user);
             return (user.Id, user.FullName, user.UserName, user.Email, roles);
         }
 
         public async Task<string> GetUserIdAsync(string userName)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName);
-            if (user == null)
-            {
-                throw new NotFoundException("User not found");
-                //throw new Exception("User not found");
-            }
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName) ?? throw new NotFoundException("User not found");
             return await _userManager.GetUserIdAsync(user);
         }
 
         public async Task<string> GetUserNameAsync(string userId)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            if (user == null)
-            {
-                throw new NotFoundException("User not found");
-                //throw new Exception("User not found");
-            }
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId) ?? throw new NotFoundException("User not found");
             return await _userManager.GetUserNameAsync(user);
         }
 
         public async Task<List<string>> GetUserRolesAsync(string userId)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            if (user == null)
-            {
-                throw new NotFoundException("User not found");
-            }
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId) ?? throw new NotFoundException("User not found");
             var roles = await _userManager.GetRolesAsync(user);
-            return roles.ToList();
+            return [.. roles];
         }
 
         public async Task<bool> IsInRoleAsync(string userId, string role)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
-
-            if (user == null)
-            {
-                throw new NotFoundException("User not found");
-            }
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId) ?? throw new NotFoundException("User not found");
             return await _userManager.IsInRoleAsync(user, role);
         }
 

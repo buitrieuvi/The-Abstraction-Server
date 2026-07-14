@@ -14,14 +14,9 @@ namespace TheAbstraction.Api.Controllers
     [ApiController]
     // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     //[Authorize(Roles = "Admin, Management")]
-    public class RoleController : ControllerBase
+    public class RoleController(IMediator mediator) : ControllerBase
     {
-        public readonly IMediator _mediator;
-
-        public RoleController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        public readonly IMediator _mediator = mediator;
 
         [HttpPost("Create")]
         [ProducesDefaultResponseType(typeof(int))]

@@ -6,25 +6,20 @@ namespace TheAbstraction.Application.Commands.Product.Update
 {
     public class UpdateProductCommand : IRequest<int>
     {
-        public string Id { get; set; } 
-        public string Name { get; set; } 
+        public string Id { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
         public int StockQuantity { get; set; }
         public bool IsActive { get; set; } = true;
     }
 
-    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, int>
+    public class UpdateProductCommandHandler(IProductService productService) : IRequestHandler<UpdateProductCommand, int>
     {
-        private readonly IProductService _productService;
+        private readonly IProductService _productService = productService;
 
-        public UpdateProductCommandHandler(IProductService productService)
+        public Task<int> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            _productService = productService;
-        }
-
-        public async Task<int> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
-        {
-            return await _productService.UpdateAsync(request.Id, request.Name, request.Description, request.StockQuantity, request.IsActive, cancellationToken);
+            return _productService.UpdateAsync(request.Id, request.Name, request.Description, request.IsActive, cancellationToken);
         }
     }
 }

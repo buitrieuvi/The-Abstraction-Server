@@ -9,14 +9,10 @@ namespace TheAbstraction.Application.Commands.Role.Create
         public string RoleName { get; set; } 
     }
 
-    public class RoleCreateCommandHandler : IRequestHandler<RoleCreateCommand, int>
+    public class RoleCreateCommandHandler(IIdentityService identityService) : IRequestHandler<RoleCreateCommand, int>
     {
-        private readonly IIdentityService _identityService;
+        private readonly IIdentityService _identityService = identityService;
 
-        public RoleCreateCommandHandler(IIdentityService identityService)
-        {
-            _identityService = identityService;
-        }
         public async Task<int> Handle(RoleCreateCommand request, CancellationToken cancellationToken)
         {
             var result = await _identityService.CreateRoleAsync(request.RoleName);

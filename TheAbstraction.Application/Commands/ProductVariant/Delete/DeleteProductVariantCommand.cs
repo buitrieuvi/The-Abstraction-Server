@@ -15,17 +15,14 @@ namespace TheAbstraction.Application.Commands.ProductVariant.Delete
     }
 
 
-    public class DeleteProductVariantCommandHandler : IRequestHandler<DeleteProductVariantCommand, int>
+    public class DeleteProductVariantCommandHandler(IProductVariantService productVariantService) : IRequestHandler<DeleteProductVariantCommand, int>
     {
-        public IProductVariantService _productVariantService;
-        public DeleteProductVariantCommandHandler(IProductVariantService productVariantService)
-        {
-            _productVariantService = productVariantService;
-        }
-        public async Task<int> Handle(DeleteProductVariantCommand request, CancellationToken cancellationToken)
+        public IProductVariantService _productVariantService = productVariantService;
+
+        public Task<int> Handle(DeleteProductVariantCommand request, CancellationToken cancellationToken)
         {
 
-            return await _productVariantService.DeleteProductVariantAsync(request.Id);
+            return _productVariantService.DeleteProductVariantAsync(request.Id, cancellationToken);
         }
     }
 }

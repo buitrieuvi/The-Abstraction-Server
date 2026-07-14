@@ -14,14 +14,10 @@ namespace TheAbstraction.Application.Queries.User
         public string UserId { get; set; }
     }
 
-    public class GetUserDetailsQueryHandler : IRequestHandler<GetUserDetailsQuery, UserDetailsResponseDTO>
+    public class GetUserDetailsQueryHandler(IIdentityService identityService) : IRequestHandler<GetUserDetailsQuery, UserDetailsResponseDTO>
     {
-        private readonly IIdentityService _identityService;
+        private readonly IIdentityService _identityService = identityService;
 
-        public GetUserDetailsQueryHandler(IIdentityService identityService)
-        {
-            _identityService = identityService;
-        }
         public async Task<UserDetailsResponseDTO> Handle(GetUserDetailsQuery request, CancellationToken cancellationToken)
         {
             var (userId, fullName, userName, email, roles) = await _identityService.GetUserDetailsAsync(request.UserId);

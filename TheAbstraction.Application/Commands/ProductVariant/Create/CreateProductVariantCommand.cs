@@ -10,7 +10,7 @@ namespace TheAbstraction.Application.Commands.ProductVariant.Create
 {
     public class CreateProductVariantCommand : IRequest<int>
     {
-        public string ProductId { get; set; } 
+        public string ProductId { get; set; }
         public decimal Price { get; set; }
         public int Quantity { get; set; }
 
@@ -20,17 +20,13 @@ namespace TheAbstraction.Application.Commands.ProductVariant.Create
 
     }
 
-    public class CreateProductVariantCommandHandler : IRequestHandler<CreateProductVariantCommand, int>
+    public class CreateProductVariantCommandHandler(IProductVariantService productVariantService) : IRequestHandler<CreateProductVariantCommand, int>
     {
-        public IProductVariantService _productVariantService;
+        public IProductVariantService _productVariantService = productVariantService;
 
-        public CreateProductVariantCommandHandler(IProductVariantService productVariantService)
+        public Task<int> Handle(CreateProductVariantCommand request, CancellationToken cancellationToken)
         {
-            _productVariantService = productVariantService;
-        }
-        public async Task<int> Handle(CreateProductVariantCommand request, CancellationToken cancellationToken)
-        {
-            return await _productVariantService.CreateProductVariantAsync(
+            return _productVariantService.CreateProductVariantAsync(
                 request.ProductId,
                 request.Price,
                 request.Quantity,
