@@ -14,5 +14,6 @@
             "migrationsFolder": "Migrations",
             "targetMigration": "Intial-Create"
         }
-    }
+    },
+    "sqltools.connections": []
 }

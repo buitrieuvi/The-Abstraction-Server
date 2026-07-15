@@ -9,10 +9,8 @@ namespace TheAbstraction.Infrastructure.Services
     public class OrderService(ApplicationDbContext context) : IOrderService
     {
         private readonly ApplicationDbContext _context = context;
-        public async Task<int> CreateOrderAsync(
-    string userId,
-    List<CreateOrderDetailCommand> orderDetails,
-    CancellationToken cancellationToken = default)
+
+        public async Task<int> CreateOrderAsync(string userId, List<CreateOrderDetailCommand> orderDetails, CancellationToken cancellationToken = default)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
