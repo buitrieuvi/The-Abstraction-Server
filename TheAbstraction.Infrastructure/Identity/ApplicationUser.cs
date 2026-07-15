@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheAbstraction.Infra.Identity
+namespace TheAbstraction.Infrastructure.Identity
 {
     public class ApplicationUser : IdentityUser
     {

@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheAbstraction.Application"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheAbstraction.Domain", "TheAbstraction.Domain\TheAbstraction.Domain.csproj", "{E3E3D16F-B118-4EA1-8F8B-5B8C9A4B6DA9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheAbstraction.Infra", "TheAbstraction.Infrastructure\TheAbstraction.Infra.csproj", "{D9430F9C-DA12-489B-A49B-20819C1037B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheAbstraction.Infrastructure", "TheAbstraction.Infrastructure\TheAbstraction.Infrastructure.csproj", "{D9430F9C-DA12-489B-A49B-20819C1037B8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheAbstraction.UnitTests", "TheAbstraction.UnitTests\TheAbstraction.UnitTests.csproj", "{9E10D414-D7F8-4E57-9CDD-B56C17C0EA7E}"
 EndProject

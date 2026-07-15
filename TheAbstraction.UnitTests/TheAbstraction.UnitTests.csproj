@@ -19,7 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TheAbstraction.Application\TheAbstraction.Application.csproj" />
     <ProjectReference Include="..\TheAbstraction.Domain\TheAbstraction.Domain.csproj" />
-    <ProjectReference Include="..\TheAbstraction.Infrastructure\TheAbstraction.Infra.csproj" />
+    <ProjectReference Include="..\TheAbstraction.Infrastructure\TheAbstraction.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

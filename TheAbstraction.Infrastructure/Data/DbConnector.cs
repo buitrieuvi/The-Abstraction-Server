@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheAbstraction.Infra.Data
+namespace TheAbstraction.Infrastructure.Data
 {
     public class DbConnector
     {

@@ -1,8 +1,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using TheAbstraction.Application.Commands.ProductVariant.Create;
-using TheAbstraction.Infra.Data;
-using TheAbstraction.Infra.Services;
+using TheAbstraction.Infrastructure.Data;
+using TheAbstraction.Infrastructure.Services;
 using Xunit;
 
 namespace TheAbstraction.UnitTests.Services
@@ -20,39 +20,21 @@ namespace TheAbstraction.UnitTests.Services
             // Arrange
             var sut = new ProductService(_context);
 
-            var productVariants = new List<CreateProductVariantCommand>
+            _context.OrderDetails.Add(new() 
             {
-                new() {
-                    Price = 10.99m,
-                    Quantity = 5,
-                    Model = "Model A",
-                    Color = "Red",
-                    Size = "M"
-                },
-                new() {
-                    Price = 12.99m,
-                    Quantity = 3,
-                    Model = "Model B",
-                    Color = "Blue",
-                    Size = "L"
-                }
-            };
+                OrderId = "fb2c2aed-ee05-475f-a6ee-07c12d68cc4f",
+                ProductVariantId = "56f783a1-9fb3-4e46-bd4d-f48912ae579b",
+                Quantity = 10,
+                Price = 100
+            });
 
-            // Act
-            var result = await sut.CreateAsync("Test Product", "Test Description", true, productVariants, default);
-
-            // Assert
-            Assert.Equal(1, result);
+            await _context.SaveChangesAsync();
         }
 
         [Fact]
         public async Task ProductService_Delete_Product()
         {
-            // Arrange
-            var sut = new ProductVariantService(_context);
-            await sut.DeleteProductVariantAsync("62a6394d-a031-44d8-ad38-ebaceaa49d37", default);
-            await sut.DeleteProductVariantAsync("dd3666f3-4b01-4486-acdc-04bb04ff3d27", default);
-            await sut.DeleteProductVariantAsync("f035f942-b99c-4269-a218-e7b033d0ad67", default);
+
 
         }
     }

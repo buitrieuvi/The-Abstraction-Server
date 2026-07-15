@@ -1,5 +1,6 @@
 using MediatR;
 using TheAbstraction.Application.Common.Interfaces;
+using TheAbstraction.Domain.Entities;
 namespace TheAbstraction.Application.Commands.Order.Create;
 
 public class CreateOrderCommand : IRequest<int>
@@ -15,6 +16,6 @@ public class CreateOrderCommandHandler(IOrderService orderService) : IRequestHan
 
     public Task<int> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        return _orderService.CreateOrderAsync(request, cancellationToken);
+        return _orderService.CreateOrderAsync(request.UserId, request.OrderDetails, cancellationToken);
     }
 }

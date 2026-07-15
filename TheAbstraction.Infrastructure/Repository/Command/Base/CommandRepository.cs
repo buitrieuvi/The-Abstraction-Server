@@ -1,5 +1,5 @@
 ﻿using TheAbstraction.Domain.Repositories.Command.Base;
-using TheAbstraction.Infra.Data;
+using TheAbstraction.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheAbstraction.Infra.Repository.Command.Base
+namespace TheAbstraction.Infrastructure.Repository.Command.Base
 {
     // Generic command repository class
     public class CommandRepository<T>(ApplicationDbContext context) : ICommandRepository<T> where T : class

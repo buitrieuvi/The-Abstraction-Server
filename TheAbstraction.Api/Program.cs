@@ -1,8 +1,8 @@
 using TheAbstraction.Application;
 using TheAbstraction.Application.Common.Interfaces;
-using TheAbstraction.Infra;
-using TheAbstraction.Infra.Data;
-using TheAbstraction.Infra.Services;
+using TheAbstraction.Infrastructure;
+using TheAbstraction.Infrastructure.Data;
+using TheAbstraction.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

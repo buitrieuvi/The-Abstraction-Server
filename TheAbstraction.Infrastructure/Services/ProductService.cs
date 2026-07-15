@@ -4,9 +4,9 @@ using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Domain.Entities;
-using TheAbstraction.Infra.Data;
+using TheAbstraction.Infrastructure.Data;
 
-namespace TheAbstraction.Infra.Services
+namespace TheAbstraction.Infrastructure.Services
 {
     public class ProductService(ApplicationDbContext context) : IProductService
     {
@@ -25,7 +25,6 @@ namespace TheAbstraction.Infra.Services
                 Description = description,
                 IsActive = isActive
             };
-
 
             _context.Products.Add(product);
             await _context.SaveChangesAsync(cancellationToken);
