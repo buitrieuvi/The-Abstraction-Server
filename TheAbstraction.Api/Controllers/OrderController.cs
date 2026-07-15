@@ -16,5 +16,4 @@ public class OrderController(IMediator mediator) : ControllerBase
     {
         return Ok(await _mediator.Send(command));
     }
-
 }

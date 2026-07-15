@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
+using MongoDB.Driver.Core.Configuration;
+using System.Text;
 using TheAbstraction.Application;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Infrastructure;
 using TheAbstraction.Infrastructure.Data;
 using TheAbstraction.Infrastructure.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,29 @@ var _key = builder.Configuration["Jwt:Key"];
 var _issuer = builder.Configuration["Jwt:Issuer"];
 var _audience = builder.Configuration["Jwt:Audience"];
 var _expirtyMinutes = builder.Configuration["Jwt:ExpiryMinutes"];
+
+builder.Services.Configure<MonggoDatabaseSettings>(
+    builder.Configuration.GetSection("MonggoDatabaseSettings")
+  );
+
+builder.Services.AddSingleton<IMongoClient>(_ => {
+    var connectionString = 
+        builder
+            .Configuration
+            .GetSection("MonggoDatabaseSettings:ConnectionString")?
+            .Value;
+    return new MongoClient(connectionString);
+});
+
+builder.Services.AddSingleton<IMongoClient>(_ => {
+    var settings = new MongoClientSettings()
+    {
+        Scheme = ConnectionStringScheme.MongoDB,
+        Server = new MongoServerAddress("localhost", 27017)
+    };
+
+    return new MongoClient(settings);
+});
 
 builder.Services.AddAuthentication(x =>
 {
@@ -40,7 +66,7 @@ builder.Services.AddAuthentication(x =>
 });
 
 builder.Services.AddSingleton<ITokenGenerator>(new TokenGenerator(_key, _issuer, _audience, _expirtyMinutes));
-
+builder.Services.AddSingleton<IPlayerService, PlayerService>();
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructure(builder.Configuration);
 
