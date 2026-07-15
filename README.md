@@ -5,7 +5,8 @@
   - Clean Architecture
   - CQRS Pattern
   - Identity (Role and User Management)
-  - SQL Server
+  - SQL Server, MonggoDB
+  - MongoDB.Driver, MongoDB.BSON
   - Dapper
   - Entity Framework
   - AutoMapper
