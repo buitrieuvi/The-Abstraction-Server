@@ -1,43 +1,64 @@
+using Microsoft.EntityFrameworkCore;
 using TheAbstraction.Application.Commands.Order.Create;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Domain.Entities;
-using TheAbstraction.Infra.Data;
+using TheAbstraction.Infrastructure.Data;
 
-namespace TheAbstraction.Infra.Services
+namespace TheAbstraction.Infrastructure.Services
 {
     public class OrderService(ApplicationDbContext context) : IOrderService
     {
         private readonly ApplicationDbContext _context = context;
-
-        public async Task<int> CreateOrderAsync(CreateOrderCommand orderCommand, CancellationToken cancellationToken = default)
+        public async Task<int> CreateOrderAsync(
+    string userId,
+    List<CreateOrderDetailCommand> orderDetails,
+    CancellationToken cancellationToken = default)
         {
-            decimal totalPrice = 0;
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-            Order order = new()
+            var order = new Order
             {
-                UserId = orderCommand.UserId
+                UserId = userId
             };
 
-            foreach (var orderDetail in orderCommand.OrderDetails)
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var variantIds = orderDetails
+                .Select(x => x.ProductVariantId)
+                .Distinct()
+                .ToList();
+
+            var variants = await _context.ProductVariants
+                .Where(x => variantIds.Contains(x.Id))
+                .ToDictionaryAsync(x => x.Id, cancellationToken);
+
+            decimal totalPrice = 0;
+
+            foreach (var item in orderDetails)
             {
-                var productVariant = await _context.ProductVariants.FindAsync(new ProductVariant { Id = orderDetail.ProductVariantId }, cancellationToken);
-                decimal price = productVariant.Price * orderDetail.Quantity;
-                totalPrice += price;
+                if (!variants.TryGetValue(item.ProductVariantId, out var variant))
+                    throw new Exception($"ProductVariant {item.ProductVariantId} not found.");
+
+                var price = variant.Price * item.Quantity;
 
                 _context.OrderDetails.Add(new OrderDetail
                 {
                     OrderId = order.Id,
-                    ProductVariantId = orderDetail.ProductVariantId,
-                    Quantity = orderDetail.Quantity,
+                    ProductVariantId = item.ProductVariantId,
+                    Quantity = item.Quantity,
                     Price = price
                 });
+
+                totalPrice += price;
             }
 
             order.TotalPrice = totalPrice;
 
-            _context.Orders.Add(order);
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
 
-            return await _context.SaveChangesAsync(cancellationToken);
+            return 1;
         }
     }
 

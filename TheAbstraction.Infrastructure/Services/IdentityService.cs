@@ -1,12 +1,12 @@
 ﻿using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.Common.Interfaces;
-using TheAbstraction.Infra.Identity;
+using TheAbstraction.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 
 
-namespace TheAbstraction.Infra.Services
+namespace TheAbstraction.Infrastructure.Services
 {
 
     public class IdentityService : IIdentityService

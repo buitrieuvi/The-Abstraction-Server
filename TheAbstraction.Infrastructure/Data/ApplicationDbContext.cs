@@ -1,9 +1,9 @@
 ﻿using TheAbstraction.Domain.Entities;
-using TheAbstraction.Infra.Identity;
+using TheAbstraction.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace TheAbstraction.Infra.Data
+namespace TheAbstraction.Infrastructure.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions) : IdentityDbContext<ApplicationUser>(dbContextOptions)
     {
@@ -14,6 +14,18 @@ namespace TheAbstraction.Infra.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Order>()
+                .Property(x => x.TotalPrice)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<OrderDetail>()
+                .Property(x => x.Price)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ProductVariant>()
+                .Property(x => x.Price)
+                .HasPrecision(18, 2);
+
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         }

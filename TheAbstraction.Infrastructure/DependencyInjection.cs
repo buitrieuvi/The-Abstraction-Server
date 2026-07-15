@@ -5,13 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Domain.Repositories.Command.Base;
 using TheAbstraction.Domain.Repositories.Query.Base;
-using TheAbstraction.Infra.Data;
-using TheAbstraction.Infra.Identity;
-using TheAbstraction.Infra.Repository.Command.Base;
-using TheAbstraction.Infra.Repository.Query.Base;
-using TheAbstraction.Infra.Services;
+using TheAbstraction.Infrastructure.Data;
+using TheAbstraction.Infrastructure.Identity;
+using TheAbstraction.Infrastructure.Repository.Command.Base;
+using TheAbstraction.Infrastructure.Repository.Query.Base;
+using TheAbstraction.Infrastructure.Services;
 
-namespace TheAbstraction.Infra
+namespace TheAbstraction.Infrastructure
 {
     public static class DependencyInjection
     {

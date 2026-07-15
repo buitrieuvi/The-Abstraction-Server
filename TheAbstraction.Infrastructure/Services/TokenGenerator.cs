@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text;
 
 
-namespace TheAbstraction.Infra.Services
+namespace TheAbstraction.Infrastructure.Services
 {
     public class TokenGenerator(string key, string issueer, string audience, string expiryMinutes) : ITokenGenerator
     {

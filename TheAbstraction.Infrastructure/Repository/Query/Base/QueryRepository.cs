@@ -1,9 +1,9 @@
 ﻿using TheAbstraction.Domain.Repositories.Query.Base;
-using TheAbstraction.Infra.Data;
+using TheAbstraction.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace TheAbstraction.Infra.Repository.Query.Base
+namespace TheAbstraction.Infrastructure.Repository.Query.Base
 {
     public class QueryRepository<T>(ApplicationDbContext context) : IQueryRepository<T> where T : class
     {

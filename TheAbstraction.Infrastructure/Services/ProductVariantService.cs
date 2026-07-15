@@ -2,9 +2,9 @@
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Domain.Entities;
-using TheAbstraction.Infra.Data;
+using TheAbstraction.Infrastructure.Data;
 
-namespace TheAbstraction.Infra.Services
+namespace TheAbstraction.Infrastructure.Services
 {
     public class ProductVariantService(ApplicationDbContext context) : IProductVariantService
     {
