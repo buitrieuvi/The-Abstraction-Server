@@ -10,6 +10,7 @@ using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Infrastructure;
 using TheAbstraction.Infrastructure.Data;
 using TheAbstraction.Infrastructure.Services;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,7 @@ var _issuer = builder.Configuration["Jwt:Issuer"];
 var _audience = builder.Configuration["Jwt:Audience"];
 var _expirtyMinutes = builder.Configuration["Jwt:ExpiryMinutes"];
 
-builder.Services.Configure<MonggoDatabaseSettings>(
+builder.Services.Configure<TheAbstraction.Infrastructure.Data.MongoDatabaseSettings>(
     builder.Configuration.GetSection("MonggoDatabaseSettings")
   );
 
@@ -79,6 +80,40 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
+    });
+});
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "API",
+        Version = "v1"
+    });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Nhập JWT theo dạng: Bearer {token}"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
     });
 });
 

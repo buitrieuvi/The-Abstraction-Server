@@ -1,6 +1,6 @@
 namespace TheAbstraction.Infrastructure.Data;
 
-public class MonggoDatabaseSettings
+public class MongoDatabaseSettings
 { 
     public string PlayerCollectionName { get; set; } = null!;
  

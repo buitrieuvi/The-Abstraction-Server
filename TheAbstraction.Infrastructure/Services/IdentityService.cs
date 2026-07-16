@@ -3,6 +3,7 @@ using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson;
 
 
 
@@ -46,6 +47,7 @@ namespace TheAbstraction.Infrastructure.Services
         {
             var user = new ApplicationUser()
             {
+                Id = ObjectId.GenerateNewId().ToString(),
                 FullName = fullName,
                 UserName = userName,
                 Email = email

@@ -17,17 +17,17 @@ namespace TheAbstraction.Infrastructure.Services
 
         private readonly IMongoCollection<Player> _playerCollection;
 
-        public PlayerService(IOptions<MonggoDatabaseSettings> monggoDatabaseSettings, IMongoClient client)
+        public PlayerService(IOptions<Data.MongoDatabaseSettings> mongoDatabaseSettings, IMongoClient client)
         {
-            var database = client.GetDatabase(monggoDatabaseSettings.Value.DatabaseName);
-            _playerCollection = database.GetCollection<Player>(monggoDatabaseSettings.Value.PlayerCollectionName);
+            var database = client.GetDatabase(mongoDatabaseSettings.Value.DatabaseName);
+            _playerCollection = database.GetCollection<Player>(mongoDatabaseSettings.Value.PlayerCollectionName);
         }
 
-        public async Task<int> Create(string namePlayer)
+        public async Task<int> Create(string userId, string namePlayer)
         {
             await _playerCollection.InsertOneAsync(new()
             {
-                Id = ObjectId.GenerateNewId().ToString(),
+                UserId = userId,
                 PlayerName = namePlayer
             });
 

@@ -1,16 +1,13 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheAbstraction.Application.Commands.Product.Create;
+﻿using System.Security.Claims;
+using MediatR;
 using TheAbstraction.Application.Common.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace TheAbstraction.Application.Commands.Player.Create
 {
     public class CreatePlayerCommand : IRequest<int>
     {
+        public string UserId { get; set; }
         public string PlayerName { get; set; }
     }
 
@@ -19,7 +16,7 @@ namespace TheAbstraction.Application.Commands.Player.Create
         private readonly IPlayerService _playerService = playerService;
         public Task<int> Handle(CreatePlayerCommand request, CancellationToken cancellationToken)
         {
-            return _playerService.Create(request.PlayerName);
+            return _playerService.Create(request.UserId, request.PlayerName);
         }
     }
 }

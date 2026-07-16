@@ -1,18 +1,20 @@
-﻿using TheAbstraction.Application.Commands.User.Create;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using TheAbstraction.Application.Commands.User.Create;
 using TheAbstraction.Application.Commands.User.Delete;
 using TheAbstraction.Application.Commands.User.Update;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Application.Queries.User;
-using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 
 namespace TheAbstraction.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
 
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     //[Authorize(Roles = "Admin, Management")]
@@ -31,15 +33,17 @@ namespace TheAbstraction.Api.Controllers
         [ProducesDefaultResponseType(typeof(List<UserResponseDTO>))]
         public async Task<IActionResult> GetAllUserAsync()
         {
-            return Ok(await _mediator.Send(new Application.Queries.User.GetUserQuery()));
+            return Ok(await _mediator.Send(new GetUserQuery()));
         }
 
-        [HttpDelete("Delete/{userId}")]
+        [Authorize(Roles = "user")]
+        [HttpDelete("Delete")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ProducesDefaultResponseType(typeof(int))]
-        public async Task<IActionResult> DeleteUser(string userId)
+        public async Task<IActionResult> DeleteUser()
         {
-            var result = await _mediator.Send(new DeleteUserCommand() { Id = userId });
-            return Ok(result);
+            var userId = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+            return Ok(await _mediator.Send(new DeleteUserCommand() { Id = userId }));
         }
 
         [HttpGet("GetUserDetails/{userId}")]
@@ -91,8 +95,7 @@ namespace TheAbstraction.Api.Controllers
         {
             if (id == command.Id)
             {
-                var result = await _mediator.Send(command);
-                return Ok(result);
+                return Ok(await _mediator.Send(command));
             }
             else
             {

@@ -26,6 +26,7 @@ namespace TheAbstraction.Infrastructure.Services
             {
                 new(JwtRegisteredClaimNames.Sub, userName),
                 new(JwtRegisteredClaimNames.Jti, userId),
+                new(ClaimTypes.NameIdentifier, userId),
                 new(ClaimTypes.Name, userName),
                 new("UserId", userId)
             };
