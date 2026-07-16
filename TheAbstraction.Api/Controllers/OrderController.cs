@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using TheAbstraction.Application.Commands.Order.Create;
+using System.Security.Claims;
 
 namespace TheAbstraction.Api.Controllers;
 
@@ -14,6 +15,8 @@ public class OrderController(IMediator mediator) : ControllerBase
     [ProducesDefaultResponseType(typeof(int))]
     public async Task<ActionResult<int>> Create([FromBody] CreateOrderCommand command)
     {
+        // var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        // command.UserId = userId;
         return Ok(await _mediator.Send(command));
     }
 }

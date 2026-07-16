@@ -8,6 +8,6 @@ namespace TheAbstraction.Application.Common.Interfaces
 {
     public interface IPlayerService
     {
-        Task<int> Create(string namePlayer);
+        Task<int> Create(string userId, string namePlayer);
     }
 }
