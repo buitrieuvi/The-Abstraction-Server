@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
@@ -46,18 +47,11 @@ public class UserTests : IClassFixture<CustomWebApplicationFactory>
         var identityService = scope.ServiceProvider
             .GetRequiredService<IIdentityService>();
 
+        var mapper = scope.ServiceProvider
+            .GetRequiredService<IMapper>();
+
         var users = await identityService.GetAllUsersAsync();
-        var userList = new List<UserResponseDTO>();
-        users.ForEach(user => 
-        {
-            userList.Add(new() 
-            {
-                Id = user.id,
-                FullName = user.fullName,
-                UserName = user.userName,
-                Email = user.email
-            });
-        });
+        var userList = mapper.Map<List<UserResponseDTO>>(users);
 
         var json = JsonConvert.SerializeObject(userList, Formatting.Indented);
 

@@ -12,9 +12,10 @@ namespace TheAbstraction.Application.Mapper
     {
         public MappingProfile()
         {
-            CreateMap<(string id, string fullName, string email), UserResponseDTO>()
+            CreateMap<(string id, string fullName, string userName, string email), UserResponseDTO>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.id))
             .ForMember(d => d.FullName, o => o.MapFrom(s => s.fullName))
+            .ForMember(d => d.UserName, o => o.MapFrom(s => s.userName))
             .ForMember(d => d.Email, o => o.MapFrom(s => s.email));
         }
     }
