@@ -1,16 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;
 using System.Text;
 using TheAbstraction.Application;
 using TheAbstraction.Application.Common.Interfaces;
+
 using TheAbstraction.Infrastructure;
-using TheAbstraction.Infrastructure.Data;
 using TheAbstraction.Infrastructure.Services;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +18,10 @@ var _key = builder.Configuration["Jwt:Key"];
 var _issuer = builder.Configuration["Jwt:Issuer"];
 var _audience = builder.Configuration["Jwt:Audience"];
 var _expirtyMinutes = builder.Configuration["Jwt:ExpiryMinutes"];
+
+//builder.Services.AddAutoMapper(typeof(UserMapper));
+//builder.Services.AddAutoMapper(typeof(UserMapper).Assembly);
+
 
 builder.Services.Configure<TheAbstraction.Infrastructure.Data.MongoDatabaseSettings>(
     builder.Configuration.GetSection("MonggoDatabaseSettings")
@@ -117,16 +119,18 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+
+//builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await dbContext.Database.MigrateAsync();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//    await dbContext.Database.MigrateAsync();
+//}
 
 if (app.Environment.IsDevelopment())
 {
@@ -142,3 +146,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+public partial class Program
+{
+}

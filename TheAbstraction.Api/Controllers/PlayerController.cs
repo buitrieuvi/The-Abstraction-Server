@@ -26,7 +26,5 @@ namespace TheAbstraction.Api.Controllers
             command.UserId = userId;
             return Ok(await _mediator.Send(command));
         }
-
-
     }
 }

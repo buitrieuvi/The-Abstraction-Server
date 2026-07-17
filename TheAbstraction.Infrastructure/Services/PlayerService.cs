@@ -33,7 +33,5 @@ namespace TheAbstraction.Infrastructure.Services
 
             return 1;
         }
-
-
     }
 }
