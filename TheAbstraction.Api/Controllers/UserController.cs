@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using TheAbstraction.Application.Commands.User.Create;
 using TheAbstraction.Application.Commands.User.Delete;
 using TheAbstraction.Application.Commands.User.Update;
+using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Application.Queries.User;
 
@@ -36,13 +38,17 @@ namespace TheAbstraction.Api.Controllers
             return Ok(await _mediator.Send(new GetUserQuery()));
         }
 
-        [Authorize(Roles = "user")]
-        [HttpDelete("Delete")]
+        [HttpDelete("Delete/{userId}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "user")]
         [ProducesDefaultResponseType(typeof(int))]
-        public async Task<IActionResult> DeleteUser()
+        public async Task<IActionResult> DeleteUser(string userId)
         {
-            var userId = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+            var jwtId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (jwtId != userId)
+            {
+                return Ok(jwtId);
+            }
             return Ok(await _mediator.Send(new DeleteUserCommand() { Id = userId }));
         }
 

@@ -1,11 +1,11 @@
-﻿using TheAbstraction.Domain.Repositories.Command.Base;
-using TheAbstraction.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using TheAbstraction.Domain.Repositories.Command.Base;
+using TheAbstraction.Infrastructure.Data;
 
 namespace TheAbstraction.Infrastructure.Repository.Command.Base
 {
@@ -14,21 +14,24 @@ namespace TheAbstraction.Infrastructure.Repository.Command.Base
     {
         protected readonly ApplicationDbContext _context = context;
 
-        public Task<T> AddAsync(T entity)
+        public async Task<T> AddAsync(T entity)
         {
-            throw new NotImplementedException();
+            await _context.Set<T>().AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
         }
 
-        public Task DeleteAsync(T entity)
+        public async Task UpdateAsync(T entity)
         {
-            throw new NotImplementedException();
+            _context.Set<T>().Update(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(T entity)
+        public async Task DeleteAsync(T entity)
         {
-            throw new NotImplementedException();
+            _context.Set<T>().Remove(entity);
+            await _context.SaveChangesAsync();
         }
-
 
     }
 }

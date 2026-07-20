@@ -10,6 +10,7 @@ namespace TheAbstraction.Application.Common.Interfaces
         Task<int> DeleteAsync(string id, CancellationToken cancellationToken = default);
 
         Task<ProductResponseDTO> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+
         Task<IReadOnlyList<ProductResponseDTO>> GetByNameAsync(string name, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<ProductResponseDTO>> GetAllAsync(CancellationToken cancellationToken = default);
     }

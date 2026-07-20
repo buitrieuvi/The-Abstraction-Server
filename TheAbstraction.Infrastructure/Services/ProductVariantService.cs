@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Domain.Entities;
@@ -105,5 +106,16 @@ namespace TheAbstraction.Infrastructure.Services
         //     var count = await _context.ProductVariants.CountAsync(pv => pv.ProductId == id, cancellationToken);
         //     return count;
         // }
+
+
+        public async Task<decimal> GetPriceProductVariantById(string id, CancellationToken cancellationToken = default)
+        {
+            var pv = _context.ProductVariants.First(x => x.Id == id);
+            if (pv == null)
+            {
+                throw new NotFoundException("Không tìm thấy mẫu mã");
+            }
+            return pv.Price;
+        }
     }
 }

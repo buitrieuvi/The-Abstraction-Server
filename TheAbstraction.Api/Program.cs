@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
@@ -8,6 +9,7 @@ using TheAbstraction.Application;
 using TheAbstraction.Application.Common.Interfaces;
 
 using TheAbstraction.Infrastructure;
+using TheAbstraction.Infrastructure.Data;
 using TheAbstraction.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -126,11 +128,11 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//    await dbContext.Database.MigrateAsync();
-//}
+using (var scope = app.Services.CreateScope())
+{
+   var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+   await dbContext.Database.MigrateAsync();
+}
 
 if (app.Environment.IsDevelopment())
 {

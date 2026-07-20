@@ -24,8 +24,6 @@ namespace TheAbstraction.Infrastructure.Services
 
             var claims = new List<Claim>()
             {
-                new(JwtRegisteredClaimNames.Sub, userName),
-                new(JwtRegisteredClaimNames.Jti, userId),
                 new(ClaimTypes.NameIdentifier, userId),
                 new(ClaimTypes.Name, userName),
                 new("UserId", userId)

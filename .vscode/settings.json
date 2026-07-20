@@ -9,7 +9,7 @@
         },
         "The-Abstraction-Server.sln": {
             "startupProject": "TheAbstraction.Api\\TheAbstraction.Api.csproj",
-            "migrationsProject": "TheAbstraction.Infrastructure\\TheAbstraction.Infra.csproj",
+            "migrationsProject": "TheAbstraction.Infrastructure\\TheAbstraction.Infrastructure.csproj",
             "dbContextClass": "",
             "migrationsFolder": "Migrations",
             "targetMigration": "Intial-Create"

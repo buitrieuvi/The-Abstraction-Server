@@ -58,6 +58,17 @@ namespace TheAbstraction.Infrastructure.Services
 
             return 1;
         }
-    }
 
+        public async Task<int> UpdateOrderStatus(string orderId, string userId, OrderStatus status, CancellationToken cancellationToken = default)
+        {
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(o => o.Id == orderId, cancellationToken);
+
+            if (order == null) { return 0; }
+            if (order.UserId != userId) { return 0; }
+
+            order.OrderStatus = status;
+            return await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
 }

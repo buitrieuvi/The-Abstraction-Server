@@ -62,7 +62,6 @@ namespace TheAbstraction.Infrastructure.Services
 
             return await _context.SaveChangesAsync(cancellationToken);
         }
-
         public async Task<int> DeleteAsync(string id, CancellationToken cancellationToken = default)
         {
             var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
@@ -83,15 +82,6 @@ namespace TheAbstraction.Infrastructure.Services
             return MapToDto(product);
         }
 
-        public async Task<IReadOnlyList<ProductResponseDTO>> GetAllAsync(CancellationToken cancellationToken = default)
-        {
-            var products = await _context.Products
-                .OrderBy(x => x.Name)
-                .ToListAsync(cancellationToken);
-
-            return [.. products.Select(MapToDto)];
-        }
-
         private static ProductResponseDTO MapToDto(Product product) => new()
         {
             Id = product.Id,
@@ -102,6 +92,14 @@ namespace TheAbstraction.Infrastructure.Services
             ModifiedDate = product.ModifiedDate
         };
 
+        public async Task<IReadOnlyList<ProductResponseDTO>> GetAllAsync(CancellationToken cancellationToken = default)
+        {
+            var products = await _context.Products
+                .OrderBy(x => x.Name)
+                .ToListAsync(cancellationToken);
+
+            return [.. products.Select(MapToDto)];
+        }
         public async Task<IReadOnlyList<ProductResponseDTO>> GetByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             var products = await _context.Products

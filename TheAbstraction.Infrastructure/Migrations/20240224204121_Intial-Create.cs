@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using TheAbstraction.Domain.Entities;
 
 #nullable disable
 
@@ -157,22 +158,22 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-                        migrationBuilder.CreateTable(
-                name: "Products",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+            migrationBuilder.CreateTable(
+    name: "Products",
+    columns: table => new
+    {
+        Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+        CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+        ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+        IsActive = table.Column<bool>(type: "bit", nullable: false),
 
-                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Products", x => x.Id);
-                });
+        Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+        Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+    },
+    constraints: table =>
+    {
+        table.PrimaryKey("PK_Products", x => x.Id);
+    });
 
             migrationBuilder.CreateTable(
                 name: "ProductVariants",
@@ -211,7 +212,8 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
 
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    OrderStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -274,7 +276,7 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                 name: "IX_OrderDetails_ProductVariantId",
                 table: "OrderDetails",
                 column: "ProductVariantId");
-    
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",

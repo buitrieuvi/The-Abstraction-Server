@@ -28,6 +28,12 @@ namespace TheAbstraction.Api.Controllers
             return Ok(await _mediator.Send(new GetProductVariantByIdQuery() { ProductId = id }));
         }
 
+        [HttpGet("GetPrice/{id}")]
+        [ProducesDefaultResponseType(typeof(List<ProductVariantResponseDTO>))]
+        public async Task<IActionResult> GetPriceProductVariantById(string id)
+        {
+            return Ok(await _mediator.Send(new GetPriceProductVariantByIdQuery() { Id = id }));
+        }
 
         [HttpPost("Create")]
         [ProducesDefaultResponseType(typeof(int))]

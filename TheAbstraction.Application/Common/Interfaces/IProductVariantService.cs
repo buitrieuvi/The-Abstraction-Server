@@ -17,5 +17,7 @@ namespace TheAbstraction.Application.Common.Interfaces
             string color,
             string size,
             CancellationToken cancellationToken = default);
+
+        Task<decimal> GetPriceProductVariantById(string id, CancellationToken cancellationToken = default);
     }
 }

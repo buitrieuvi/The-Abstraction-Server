@@ -5,8 +5,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using TheAbstraction.Application.Commands.Order.Create;
 using TheAbstraction.Application.Commands.Player.Create;
+using TheAbstraction.Application.Commands.Player.Delete;
+using TheAbstraction.Application.Common.Exceptions;
 
 namespace TheAbstraction.Api.Controllers
 {
@@ -23,8 +26,21 @@ namespace TheAbstraction.Api.Controllers
         public async Task<ActionResult<int>> Create([FromBody] CreatePlayerCommand command)
         {
             var userId = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+            if (command.UserId != userId)
+            {
+                throw new NotFoundException("không tìm thấy được user id");
+            }
             command.UserId = userId;
             return Ok(await _mediator.Send(command));
         }
+
+        [HttpDelete("Delete/{playerId}")]
+        [ProducesDefaultResponseType(typeof(int))]
+        public async Task<IActionResult> Delete(string playerId)
+        {
+            return Ok(await _mediator.Send(new DeletePlayerCommand() { PlayerId = playerId }));
+        }
+
+        
     }
 }
