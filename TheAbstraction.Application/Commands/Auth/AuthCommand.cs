@@ -9,8 +9,8 @@ namespace TheAbstraction.Application.Commands.Auth
 {
     public class AuthCommand : IRequest<AuthResponseDTO>
     {
-        public string UserName { get; set; } 
-        public string Password { get; set; } 
+        public string UserName { get; set; }
+        public string Password { get; set; }
     }
 
 
@@ -21,11 +21,12 @@ namespace TheAbstraction.Application.Commands.Auth
 
         public async Task<AuthResponseDTO> Handle(AuthCommand request, CancellationToken cancellationToken)
         {
+
             var result = await _identityService.SigninUserAsync(request.UserName, request.Password);
 
             if (!result)
             {
-                throw new BadRequestException("Invalid username or password");
+                throw new NotFoundException("tài khoản và mật khẩu không đúng");
             }
 
             var (userId, fullName, userName, email, roles) = await _identityService.GetUserDetailsAsync(await _identityService.GetUserIdAsync(request.UserName));
@@ -38,6 +39,8 @@ namespace TheAbstraction.Application.Commands.Auth
                 Name = userName,
                 Token = token
             };
+
+            
         }
     }
 }

@@ -24,32 +24,34 @@ namespace TheAbstraction.Api.Controllers
     {
         private readonly IMediator _mediator = mediator;
 
-        [HttpPost("Create")]
+        [HttpPost("create")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<ActionResult> CreateUser(CreateUserCommand command)
         {
-            return Ok(await _mediator.Send(command));
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet("get")]
+        [Authorize(Roles = "admin")]
         [ProducesDefaultResponseType(typeof(List<UserResponseDTO>))]
         public async Task<IActionResult> GetAllUserAsync()
         {
-            return Ok(await _mediator.Send(new GetUserQuery()));
+            var result = await _mediator.Send(new GetUserQuery());
+            return Ok(result);
         }
 
-        [HttpDelete("Delete/{userId}")]
+        [HttpDelete("delete")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Roles = "user")]
         [ProducesDefaultResponseType(typeof(int))]
-        public async Task<IActionResult> DeleteUser(string userId)
+        public async Task<IActionResult> DeleteUser([FromBody] DeleteUserCommand command)
         {
-            var jwtId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (jwtId != userId)
-            {
-                return Ok(jwtId);
-            }
-            return Ok(await _mediator.Send(new DeleteUserCommand() { Id = userId }));
+            var jwtUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (jwtUserId != command.Id) { throw new BadRequestException("Không thể xoá"); }
+            command.Id = jwtUserId;
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         [HttpGet("GetUserDetails/{userId}")]
@@ -70,7 +72,6 @@ namespace TheAbstraction.Api.Controllers
 
         [HttpPost("AssignRoles")]
         [ProducesDefaultResponseType(typeof(int))]
-
         public async Task<ActionResult> AssignRoles(AssignUsersRoleCommand command)
         {
             var result = await _mediator.Send(command);

@@ -48,10 +48,7 @@ namespace TheAbstraction.Infrastructure.Services
         public async Task<int> UpdateAsync(string id, string name, string description, bool isActive, CancellationToken cancellationToken = default)
         {
             var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-            if (product is null)
-            {
-                return 0;
-            }
+
             product.Name = name;
             product.Description = description;
             product.IsActive = isActive;
@@ -59,26 +56,21 @@ namespace TheAbstraction.Infrastructure.Services
 
             var result = _context.Products.Update(product);
 
-
             return await _context.SaveChangesAsync(cancellationToken);
         }
         public async Task<int> DeleteAsync(string id, CancellationToken cancellationToken = default)
         {
             var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-            if (product is null)
-            {
-                return 0;
-            }
 
-            _context.Products.Remove(product);
             _context.ProductVariants.Where(x => x.ProductId == id).ToList()
                 .ForEach(x => _context.ProductVariants.Remove(x));
+            _context.Products.Remove(product);
 
             return await _context.SaveChangesAsync(cancellationToken);
         }
         public async Task<ProductResponseDTO> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken) ?? throw new NotFoundException("Không tìm thấy sản phẩm");
+            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             return MapToDto(product);
         }
 
@@ -108,6 +100,11 @@ namespace TheAbstraction.Infrastructure.Services
                 .ToListAsync(cancellationToken);
 
             return [.. products.Select(MapToDto)];
+        }
+
+        public async Task GetByIdAsyn()
+        {
+            
         }
     }
 

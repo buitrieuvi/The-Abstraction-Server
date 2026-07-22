@@ -11,7 +11,7 @@ namespace TheAbstraction.Api.Controllers
     {
         private readonly IMediator _mediator = mediator;
 
-        [HttpPost("Login")]
+        [HttpPost("login")]
         [ProducesDefaultResponseType(typeof(AuthResponseDTO))]
         public async Task<IActionResult> Login([FromBody] AuthCommand command)
         {

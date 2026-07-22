@@ -33,7 +33,9 @@ namespace TheAbstraction.Infrastructure.Services
 
         public async Task<bool> CreateRoleAsync(string roleName)
         {
-            var result = await _roleManager.CreateAsync(new IdentityRole(roleName));
+            var newRole = new IdentityRole(roleName);
+            newRole.Id = ObjectId.GenerateNewId().ToString();
+            var result = await _roleManager.CreateAsync(newRole);
             if (!result.Succeeded)
             {
                 throw new ValidationException(result.Errors);
@@ -85,7 +87,8 @@ namespace TheAbstraction.Infrastructure.Services
 
         public async Task<bool> DeleteUserAsync(string userId)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId) ?? throw new NotFoundException("User not found");
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId) 
+                ?? throw new NotFoundException("User not found");
             if (user.UserName == "system" || user.UserName == "admin")
             {
                 throw new Exception("You can not delete system or admin user");
@@ -177,8 +180,6 @@ namespace TheAbstraction.Infrastructure.Services
         {
             var result = await _signInManager.PasswordSignInAsync(userName, password, true, false);
             return result.Succeeded;
-
-
         }
 
         public async Task<bool> UpdateUserProfile(string id, string fullName, string email, IList<string> roles)
@@ -218,5 +219,7 @@ namespace TheAbstraction.Infrastructure.Services
 
             return result.Succeeded;
         }
+
+
     }
 }

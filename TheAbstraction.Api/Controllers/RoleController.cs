@@ -6,64 +6,59 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TheAbstraction.Application.Commands.Role.Delete;
 
 
 namespace TheAbstraction.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    //[Authorize(Roles = "Admin, Management")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = "Admin, Management")]
     public class RoleController(IMediator mediator) : ControllerBase
     {
         public readonly IMediator _mediator = mediator;
 
-        [HttpPost("Create")]
+        [HttpPost("create")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<ActionResult> CreateRoleAsync(RoleCreateCommand command)
         {
-            return Ok(await _mediator.Send(command));
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet("get")]
         [ProducesDefaultResponseType(typeof(List<RoleResponseDTO>))]
         public async Task<IActionResult> GetRoleAsync()
         {
-            return Ok(await _mediator.Send(new GetRoleQuery()));
+            var result = await _mediator.Send(new GetRoleQuery());
+            return Ok(result);
         }
 
 
-        [HttpGet("{id}")]
+        [HttpGet("get/{id}")]
         [ProducesDefaultResponseType(typeof(RoleResponseDTO))]
         public async Task<IActionResult> GetRoleByIdAsync(string id)
         {
-            return Ok(await _mediator.Send(new GetRoleByIdQuery() { RoleId = id }));
+
+            var result = await _mediator.Send(new GetRoleByIdQuery() { RoleId = id });
+            return Ok(result);
         }
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("delete")]
         [ProducesDefaultResponseType(typeof(int))]
-        public async Task<IActionResult> DeleteRoleAsync(string id)
+        public async Task<IActionResult> DeleteRoleAsync([FromBody] DeleteRoleCommand command)
         {
-            return Ok(await _mediator.Send(new Application.Commands.Role.Delete.DeleteRoleCommand()
-            {
-                RoleId = id
-            }));
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
-        [HttpPut("Edit/{id}")]
+        [HttpPut("edit")]
         [ProducesDefaultResponseType(typeof(int))]
-        public async Task<ActionResult> EditRole(string id, [FromBody] UpdateRoleCommand command)
+        public async Task<ActionResult> EditRole([FromBody] UpdateRoleCommand command)
         {
-            if (id == command.Id)
-            {
-                var result = await _mediator.Send(command);
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
-
     }
 }
