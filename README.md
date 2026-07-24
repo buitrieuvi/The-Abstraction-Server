@@ -31,7 +31,7 @@ Mô tả chi tiết dự án:
 ## 🏗️ Kiến trúc
 
 ```
-Presentation
+API
       │
 Application
       │
@@ -39,7 +39,7 @@ Domain
       │
 Infrastructure
       │
-Database
+Test
 ```
 
 ---
@@ -48,10 +48,10 @@ Database
 
 | Công nghệ | Phiên bản |
 |-----------|-----------|
-| .NET | 9 |
-| ASP.NET Core | 9 |
-| EF Core | 9 |
-| SQL Server | 2022 |
+| .NET | 8 |
+| ASP.NET Core | 8 |
+| EF Core | 8 |
+| SQL Server | 2026 |
 | MediatR | Latest |
 | AutoMapper | Latest |
 | FluentValidation | Latest |
@@ -96,7 +96,7 @@ src
 ### Clone
 
 ```bash
-git clone https://github.com/username/project.git
+git clone https://github.com/buitrieuvi/The-Abstraction-Server.git
 ```
 
 ### Restore
@@ -155,8 +155,8 @@ Authorization: Bearer {token}
 
 | Method | Endpoint | Description |
 |---------|----------|-------------|
-| POST | /api/user/register | Đăng ký |
-| POST | /api/user/login | Đăng nhập |
+| POST | /api/auth/create | Đăng ký |
+| POST | /api/auth/login | Đăng nhập |
 
 ---
 
@@ -172,25 +172,69 @@ Authorization: Bearer {token}
 
 ---
 
-## 📄 Request Example
+## 📄 Request (thêm sản phẩm)
 
 ```json
 {
-  "name": "Laptop",
-  "description": "Gaming Laptop",
-  "price": 25000000
+  "name": "Áo thun nam cổ tròn",
+  "description": "Áo thun cotton 100%, mềm mại và thoáng khí.",
+  "isActive": true,
+  "productVariant": [
+    {
+      "price": 199000,
+      "quantity": 50,
+      "model": "Basic",
+      "color": "Đen",
+      "size": "M"
+    },
+    {
+      "price": 199000,
+      "quantity": 30,
+      "model": "Basic",
+      "color": "Đen",
+      "size": "L"
+    },
+    {
+      "price": 219000,
+      "quantity": 20,
+      "model": "Premium",
+      "color": "Trắng",
+      "size": "XL"
+    }
+  ]
+```
+
+---
+
+## 📄 Response (thêm order)
+
+```json
+{
+    "orderDetails":
+    [
+        {
+            "productVariantId": "6a6125ed12522c267ee25d7a",
+            "quantity": 2
+        }
+    ]
+
 }
 ```
 
 ---
 
-## 📄 Response Example
+## 📄 Response (thêm user)
 
 ```json
 {
-  "id": "01JKXXXX",
-  "name": "Laptop",
-  "price": 25000000
+  "fullName": "Bui Trieu Vi",
+  "userName": "buitrieuvi1",
+  "email": "buitrieuvi20001@example.com",
+  "password": "vi2000",
+  "confirmationPassword": "vi2000",
+  "roles": [
+    "admin"
+  ]
 }
 ```
 
