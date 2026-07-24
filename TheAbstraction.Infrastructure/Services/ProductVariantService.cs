@@ -11,11 +11,10 @@ namespace TheAbstraction.Infrastructure.Services
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<int> CreateProductVariantAsync(string productId, decimal price, int quantity, string model, string color, string size, CancellationToken cancellationToken = default)
+        public async Task<int> CreateProductVariantAsync(decimal price, int quantity, string model, string color, string size, CancellationToken cancellationToken = default)
         {
             _context.ProductVariants.Add(new ProductVariant
             {
-                ProductId = productId,
                 Price = price,
                 Quantity = quantity,
                 Model = model,

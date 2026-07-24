@@ -58,13 +58,10 @@ namespace TheAbstraction.Infrastructure.Services
 
             return await _context.SaveChangesAsync(cancellationToken);
         }
-        public async Task<int> DeleteAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<int> DeleteAsync(CancellationToken cancellationToken = default)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-
-            _context.ProductVariants.Where(x => x.ProductId == id).ToList()
-                .ForEach(x => _context.ProductVariants.Remove(x));
-            _context.Products.Remove(product);
+            _context.ProductVariants.RemoveRange(_context.ProductVariants);
+            _context.Products.RemoveRange(_context.Products);
 
             return await _context.SaveChangesAsync(cancellationToken);
         }
@@ -101,11 +98,7 @@ namespace TheAbstraction.Infrastructure.Services
 
             return [.. products.Select(MapToDto)];
         }
-
-        public async Task GetByIdAsyn()
-        {
-            
-        }
+        
     }
 
 }

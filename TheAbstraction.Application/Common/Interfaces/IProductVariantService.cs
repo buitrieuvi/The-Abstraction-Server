@@ -6,7 +6,7 @@ namespace TheAbstraction.Application.Common.Interfaces
     {
         Task<IReadOnlyList<ProductVariantResponseDTO>> GetProductVariantAsync(CancellationToken cancellationToken = default);
         Task<IReadOnlyList<ProductVariantResponseDTO>> GetProductVariantByProductIdAsync(string productId, CancellationToken cancellationToken = default);
-        Task<int> CreateProductVariantAsync(string productId, decimal price, int quantity,
+        Task<int> CreateProductVariantAsync(decimal price, int quantity,
             string model,
             string color,
             string size,

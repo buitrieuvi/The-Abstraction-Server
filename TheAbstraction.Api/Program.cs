@@ -26,14 +26,14 @@ var _expirtyMinutes = builder.Configuration["Jwt:ExpiryMinutes"];
 
 
 builder.Services.Configure<TheAbstraction.Infrastructure.Data.MongoDatabaseSettings>(
-    builder.Configuration.GetSection("MonggoDatabaseSettings")
+    builder.Configuration.GetSection("MongoDatabaseSettings")
   );
 
 builder.Services.AddSingleton<IMongoClient>(_ => {
     var connectionString = 
         builder
             .Configuration
-            .GetSection("MonggoDatabaseSettings:ConnectionString")?
+            .GetSection("MongoDatabaseSettings:ConnectionString")?
             .Value;
     return new MongoClient(connectionString);
 });
@@ -72,6 +72,8 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddSingleton<ITokenGenerator>(new TokenGenerator(_key, _issuer, _audience, _expirtyMinutes));
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
+builder.Services.AddSingleton<IItemService, ItemService>();
+
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -87,6 +89,11 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IIdentityService, IdentityService>();
+
 //builder.Services.AddSwaggerGen(options =>
 //{
 //    options.SwaggerDoc("v1", new OpenApiInfo
@@ -97,7 +104,7 @@ builder.Services.AddCors(options =>
 
 //    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
 //    {
-//        Name = "Authorization",
+//        ItemName = "Authorization",
 //        Type = SecuritySchemeType.Http,
 //        Scheme = "bearer",
 //        BearerFormat = "JWT",
@@ -113,7 +120,7 @@ builder.Services.AddCors(options =>
 //                Reference = new OpenApiReference
 //                {
 //                    Type = ReferenceType.SecurityScheme,
-//                    Id = "Bearer"
+//                    UserId = "Bearer"
 //                }
 //            },
 //            Array.Empty<string>()

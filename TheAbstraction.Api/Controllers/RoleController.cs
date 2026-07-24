@@ -21,7 +21,7 @@ namespace TheAbstraction.Api.Controllers
 
         [HttpPost("create")]
         [ProducesDefaultResponseType(typeof(int))]
-        public async Task<ActionResult> CreateRoleAsync(RoleCreateCommand command)
+        public async Task<ActionResult> CreateRoleAsync([FromBody] RoleCreateCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

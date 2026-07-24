@@ -1,9 +1,9 @@
-﻿using TheAbstraction.Application.Common.Exceptions;
-using TheAbstraction.Application.Common.Interfaces;
-using TheAbstraction.Infrastructure.Identity;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
+using TheAbstraction.Application.Common.Exceptions;
+using TheAbstraction.Application.Common.Interfaces;
+using TheAbstraction.Infrastructure.Identity;
 
 
 
@@ -111,14 +111,23 @@ namespace TheAbstraction.Infrastructure.Services
             return users.Select(user => (user.Id, user.FullName, user.UserName, user.Email)).ToList();
         }
 
-        public Task<List<(string id, string userName, string email, IList<string> roles)>> GetAllUsersDetailsAsync()
+        public async Task<List<(string id, string userName, string email, IList<string> roles)>> GetAllUsersDetailsAsync()
         {
-            throw new NotImplementedException();
+            var users = await GetAllUsersAsync();
+            var result = new List<(string id, string userName, string email, IList<string> roles)>();
 
-            //var roles = await _userManager.GetRolesAsync(user);
-            //return (user.Id, user.UserName, user.Email, roles);
+            foreach (var user in users)
+            {
+                result.Add(new()
+                {
+                    id = user.id,
+                    userName = user.userName,
+                    email = user.email,
+                    roles = await GetUserRolesAsync(user.id)
+                });
+            }
 
-            //var users = _userManager.Users.ToListAsync();
+            return result;
         }
 
         public async Task<List<(string id, string roleName)>> GetRolesAsync()
@@ -219,7 +228,5 @@ namespace TheAbstraction.Infrastructure.Services
 
             return result.Succeeded;
         }
-
-
     }
 }

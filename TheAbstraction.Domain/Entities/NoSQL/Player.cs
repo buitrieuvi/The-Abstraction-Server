@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using TheAbstraction.Domain.Entities.NoSQL;
 
 namespace TheAbstraction.Domain.Entities.NoSQL
 {

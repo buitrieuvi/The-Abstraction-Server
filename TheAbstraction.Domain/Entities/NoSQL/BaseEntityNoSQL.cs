@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TheAbstraction.Domain.Entities
+namespace TheAbstraction.Domain.Entities.NoSQL
 {
     public class BaseEntityNoSQL
     {

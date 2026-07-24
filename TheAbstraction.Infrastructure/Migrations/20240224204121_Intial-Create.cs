@@ -1,9 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using TheAbstraction.Domain.Entities;
-
 #nullable disable
-
 namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -25,7 +23,6 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                 });
-
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
@@ -51,7 +48,6 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                 });
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
@@ -69,10 +65,9 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
@@ -90,10 +85,9 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
                 columns: table => new
@@ -110,10 +104,9 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
                 columns: table => new
@@ -128,16 +121,15 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
                 columns: table => new
@@ -154,27 +146,24 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
             migrationBuilder.CreateTable(
-    name: "Products",
-    columns: table => new
-    {
-        Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-        CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-        ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-        IsActive = table.Column<bool>(type: "bit", nullable: false),
-
-        Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-        Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-    },
-    constraints: table =>
-    {
-        table.PrimaryKey("PK_Products", x => x.Id);
-    });
-
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                });
             migrationBuilder.CreateTable(
                 name: "ProductVariants",
                 columns: table => new
@@ -183,7 +172,6 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-
                     ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
@@ -198,10 +186,9 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                         name: "FK_ProductVariants_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
             migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
@@ -210,7 +197,6 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     OrderStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
@@ -222,10 +208,9 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                         name: "FK_Orders_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
             migrationBuilder.CreateTable(
                 name: "OrderDetails",
                 columns: table => new
@@ -234,7 +219,6 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-
                     OrderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProductVariantId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
@@ -247,68 +231,57 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                         name: "FK_OrderDetails_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OrderDetails_ProductVariants_ProductVariantId",
                         column: x => x.ProductVariantId,
                         principalTable: "ProductVariants",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
             migrationBuilder.CreateIndex(
                 name: "IX_ProductVariants_ProductId",
                 table: "ProductVariants",
                 column: "ProductId");
-
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
                 table: "Orders",
                 column: "UserId");
-
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetails_OrderId",
                 table: "OrderDetails",
                 column: "OrderId");
-
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetails_ProductVariantId",
                 table: "OrderDetails",
                 column: "ProductVariantId");
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
-
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
                 table: "AspNetUserClaims",
                 column: "UserId");
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
                 table: "AspNetUserLogins",
                 column: "UserId");
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
-
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
-
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
@@ -316,40 +289,29 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
         }
-
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "Products");
-
             migrationBuilder.DropTable(
                 name: "ProductVariants");
-
             migrationBuilder.DropTable(
                 name: "OrderDetails");
-
             migrationBuilder.DropTable(
                 name: "Orders");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
-
             migrationBuilder.DropTable(
                 name: "AspNetUserClaims");
-
             migrationBuilder.DropTable(
                 name: "AspNetUserLogins");
-
             migrationBuilder.DropTable(
                 name: "AspNetUserRoles");
-
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
         }

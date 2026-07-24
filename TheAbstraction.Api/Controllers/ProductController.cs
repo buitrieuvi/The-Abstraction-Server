@@ -1,4 +1,6 @@
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TheAbstraction.Application.Commands.Product.Create;
 using TheAbstraction.Application.Commands.Product.Delete;
@@ -10,40 +12,42 @@ namespace TheAbstraction.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = "admin")]
     public class ProductController(IMediator mediator) : ControllerBase
     {
         // tiếp tục hoàn thành sản phẩm và người dùng
         private readonly IMediator _mediator = mediator;
 
-        [HttpGet("GetAll")]
+        [HttpGet("get")]
         [ProducesDefaultResponseType(typeof(List<ProductResponseDTO>))]
         public async Task<IActionResult> GetProductAsync()
         {
             return Ok(await _mediator.Send(new GetProductQuery()));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("get/{id}")]
         [ProducesDefaultResponseType(typeof(RoleResponseDTO))]
         public async Task<IActionResult> GetRoleByIdAsync(string id)
         {
             return Ok(await _mediator.Send(new GetProductByIdQuery() { Id = id }));
         }
 
-        [HttpGet("GetByName/{name}")]
+        [HttpGet("getByName/{name}")]
         [ProducesDefaultResponseType(typeof(List<ProductResponseDTO>))]
         public async Task<IActionResult> GetProductByNameAsync(string name)
         {
             return Ok(await _mediator.Send(new GetProductByNameQuery() { Name = name }));
         }
 
-        [HttpPost("Create")]
+        [HttpPost("create")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<ActionResult<int>> Create([FromBody] CreateProductCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
 
-        [HttpPost("CreateRange")]
+        [HttpPost("createRange")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<ActionResult<int>> CreateRange([FromBody] List<CreateProductCommand> command)
         {
@@ -56,17 +60,14 @@ namespace TheAbstraction.Api.Controllers
         }
 
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("delete")]
         [ProducesDefaultResponseType(typeof(int))]
-        public async Task<IActionResult> DeleteProductAsync(string id)
+        public async Task<IActionResult> DeleteProductAsync()
         {
-            return Ok(await _mediator.Send(new DeleteProductCommand()
-            {
-                Id = id
-            }));
+            return Ok(await _mediator.Send(new DeleteProductCommand()));
         }
 
-        [HttpPut("Edit/{id}")]
+        [HttpPut("edit")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<ActionResult> EditProduct(string id, [FromBody] UpdateProductCommand command)
         {

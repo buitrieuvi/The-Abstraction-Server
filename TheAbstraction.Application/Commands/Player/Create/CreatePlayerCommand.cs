@@ -1,22 +1,25 @@
-﻿using System.Security.Claims;
-using MediatR;
-using TheAbstraction.Application.Common.Interfaces;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using TheAbstraction.Application.Common.Interfaces;
 
 namespace TheAbstraction.Application.Commands.Player.Create
 {
     public class CreatePlayerCommand : IRequest<int>
     {
-        public string UserId { get; set; }
         public string PlayerName { get; set; }
     }
 
-    public class CreatePlayerCommandHandler(IPlayerService playerService) : IRequestHandler<CreatePlayerCommand, int>
+    public class CreatePlayerCommandHandler(IPlayerService playerService, IHttpContextAccessor httpContextAccessor) : IRequestHandler<CreatePlayerCommand, int>
     {
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private readonly IPlayerService _playerService = playerService;
         public Task<int> Handle(CreatePlayerCommand request, CancellationToken cancellationToken)
         {
-            return _playerService.Create(request.UserId, request.PlayerName);
+            var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            return _playerService.Create(userId, request.PlayerName);
         }
     }
 }

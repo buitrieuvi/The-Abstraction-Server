@@ -6,7 +6,6 @@ namespace TheAbstraction.Application.Commands.Product.Delete
 {
     public class DeleteProductCommand : IRequest<int>
     {
-        public string Id { get; set; }
     }
 
     public class DeleteProductCommandHandler(IProductService productService) : IRequestHandler<DeleteProductCommand, int>
@@ -15,9 +14,7 @@ namespace TheAbstraction.Application.Commands.Product.Delete
 
         public Task<int> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
-            var productId = _productService.GetByIdAsync(request.Id).Result.Id;
-            if (productId == null) { throw new NotFoundException("Không tìm thấy người dùng"); }
-            return _productService.DeleteAsync(request.Id, cancellationToken);
+            return _productService.DeleteAsync(cancellationToken);
         }
     }
 }

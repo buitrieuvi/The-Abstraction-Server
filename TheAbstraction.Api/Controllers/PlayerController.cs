@@ -25,12 +25,12 @@ namespace TheAbstraction.Api.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<int>> Create([FromBody] CreatePlayerCommand command)
         {
-            var userId = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-            if (command.UserId != userId)
-            {
-                throw new NotFoundException("không tìm thấy được user id");
-            }
-            command.UserId = userId;
+            //var userId = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+            //if (command.UserId != userId)
+            //{
+            //    throw new NotFoundException("không tìm thấy được user id");
+            //}
+            //command.UserId = userId;
             return Ok(await _mediator.Send(command));
         }
 

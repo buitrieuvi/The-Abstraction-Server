@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Domain.Entities.NoSQL;
@@ -27,7 +27,7 @@ namespace TheAbstraction.Infrastructure.Services
         public async Task<int> Create(string userId, string playerName)
         {
             var playerExist = _playerCollection.Find(x => x.PlayerName == playerName);
-            if (!playerExist.Any())
+            if (playerExist.Any())
             {
                 throw new BadRequestException("tên người chơi đã tồn tại");
             }
@@ -47,6 +47,5 @@ namespace TheAbstraction.Infrastructure.Services
             var deleteResult = await _playerCollection.DeleteOneAsync(filter);
             return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0 ? 1 : 0;
         }
-        
     }
 }

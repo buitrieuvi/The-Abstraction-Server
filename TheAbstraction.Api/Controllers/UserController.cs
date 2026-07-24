@@ -17,7 +17,6 @@ namespace TheAbstraction.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     
-
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     //[Authorize(Roles = "Admin, Management")]
     public class UserController(IMediator mediator) : ControllerBase
@@ -33,7 +32,6 @@ namespace TheAbstraction.Api.Controllers
         }
 
         [HttpGet("get")]
-        [Authorize(Roles = "admin")]
         [ProducesDefaultResponseType(typeof(List<UserResponseDTO>))]
         public async Task<IActionResult> GetAllUserAsync()
         {
@@ -42,19 +40,14 @@ namespace TheAbstraction.Api.Controllers
         }
 
         [HttpDelete("delete")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [Authorize(Roles = "user")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<IActionResult> DeleteUser([FromBody] DeleteUserCommand command)
         {
-            var jwtUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (jwtUserId != command.Id) { throw new BadRequestException("Không thể xoá"); }
-            command.Id = jwtUserId;
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
-        [HttpGet("GetUserDetails/{userId}")]
+        [HttpGet("getUserDetails/{userId}")]
         [ProducesDefaultResponseType(typeof(UserDetailsResponseDTO))]
         public async Task<IActionResult> GetUserDetails(string userId)
         {
@@ -62,7 +55,7 @@ namespace TheAbstraction.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetUserDetailsByUserName/{userName}")]
+        [HttpGet("getUserDetailsByUserName/{userName}")]
         [ProducesDefaultResponseType(typeof(UserDetailsResponseDTO))]
         public async Task<IActionResult> GetUserDetailsByUserName(string userName)
         {
@@ -70,7 +63,7 @@ namespace TheAbstraction.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPost("AssignRoles")]
+        [HttpPost("assignRoles")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<ActionResult> AssignRoles(AssignUsersRoleCommand command)
         {
@@ -78,7 +71,7 @@ namespace TheAbstraction.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPut("EditUserRoles")]
+        [HttpPut("editUserRoles")]
         [ProducesDefaultResponseType(typeof(int))]
 
         public async Task<ActionResult> EditUserRoles(UpdateUserRolesCommand command)
@@ -87,7 +80,7 @@ namespace TheAbstraction.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetAllUserDetails")]
+        [HttpGet("getAlluserDetails")]
         [ProducesDefaultResponseType(typeof(UserDetailsResponseDTO))]
         public async Task<IActionResult> GetAllUserDetails()
         {
@@ -96,7 +89,7 @@ namespace TheAbstraction.Api.Controllers
         }
 
 
-        [HttpPut("EditUserProfile/{id}")]
+        [HttpPut("editUserProfile/{id}")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<ActionResult> EditUserProfile(string id, [FromBody] EditUserProfileCommand command)
         {
