@@ -41,7 +41,7 @@ namespace TheAbstraction.UnitTests.Services
         }
 
         [Fact]
-        public async Task Get_All_Item()
+        public async Task Get_Item()
         {
             using IServiceScope scope = _provider.CreateScope();
 

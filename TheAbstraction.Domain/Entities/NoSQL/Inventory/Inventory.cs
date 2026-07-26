@@ -1,9 +1,10 @@
-﻿namespace TheAbstraction.Domain.Entities.NoSQL.Inventory
+﻿using MongoDB.Bson;
+
+namespace TheAbstraction.Domain.Entities.NoSQL.Inventory
 {
     public class Inventory : BaseEntityNoSQL
     {
-        public string PlayerId { get; set; } 
-
-        public List<InventorySlot> Items { get; set; }
+        public ObjectId PlayerId { get; set; }
+        public List<InventorySlot> Items { get; set; } = [];
     }
 }

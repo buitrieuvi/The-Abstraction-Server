@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
-using TheAbstraction.Application.Commands.Order.Create;
-using TheAbstraction.Application.Commands.Player.Create;
-using TheAbstraction.Application.Commands.Player.Delete;
+using TheAbstraction.Application.Commands.Player;
 using TheAbstraction.Application.Common.Exceptions;
 
 namespace TheAbstraction.Api.Controllers
@@ -25,20 +23,16 @@ namespace TheAbstraction.Api.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<int>> Create([FromBody] CreatePlayerCommand command)
         {
-            //var userId = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-            //if (command.UserId != userId)
-            //{
-            //    throw new NotFoundException("không tìm thấy được user id");
-            //}
-            //command.UserId = userId;
-            return Ok(await _mediator.Send(command));
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
-        [HttpDelete("Delete/{playerId}")]
+        [HttpDelete("DeletePlayerByUserId/{playerId}")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<IActionResult> Delete(string playerId)
         {
-            return Ok(await _mediator.Send(new DeletePlayerCommand() { PlayerId = playerId }));
+            var result = await _mediator.Send(new DeletePlayerCommand() { PlayerId = playerId });
+            return Ok(result);
         }
 
         

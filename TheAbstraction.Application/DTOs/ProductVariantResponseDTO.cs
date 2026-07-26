@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 
 namespace TheAbstraction.Application.DTOs
 {
-    public class ProductVariantResponseDTO : BaseDTO
+    public class ProductVariantResponseDTO
     {
+        public string Id { get; set; }
         public string ProductId { get; set; }
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public string Model { get; set; }
         public string Color { get; set; }
         public string Size { get; set; }
+        public bool IsActive { get; set; }
 
     }
 }

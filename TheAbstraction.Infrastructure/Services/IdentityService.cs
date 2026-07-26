@@ -21,7 +21,6 @@ namespace TheAbstraction.Infrastructure.Services
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
-            _roleManager = roleManager;
         }
 
         public async Task<bool> AssignUserToRole(string userName, IList<string> roles)
@@ -62,7 +61,7 @@ namespace TheAbstraction.Infrastructure.Services
                 throw new ValidationException(result.Errors);
             }
 
-            var addUserRole = await _userManager.AddToRolesAsync(user, roles);
+            var addUserRole = await _userManager.AddToRolesAsync(user, roles ?? []);
             if (!addUserRole.Succeeded)
             {
                 throw new ValidationException(addUserRole.Errors);
@@ -91,8 +90,7 @@ namespace TheAbstraction.Infrastructure.Services
                 ?? throw new NotFoundException("User not found");
             if (user.UserName == "system" || user.UserName == "admin")
             {
-                throw new Exception("You can not delete system or admin user");
-                //throw new BadRequestException("You can not delete system or admin user");
+                throw new BadRequestException("You can not delete system or admin user");
             }
             var result = await _userManager.DeleteAsync(user);
             return result.Succeeded;
@@ -193,7 +191,7 @@ namespace TheAbstraction.Infrastructure.Services
 
         public async Task<bool> UpdateUserProfile(string id, string fullName, string email, IList<string> roles)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id) ?? throw new NotFoundException("User not found");
             user.FullName = fullName;
             user.Email = email;
             var result = await _userManager.UpdateAsync(user);
@@ -203,7 +201,7 @@ namespace TheAbstraction.Infrastructure.Services
 
         public async Task<(string id, string roleName)> GetRoleByIdAsync(string id)
         {
-            var role = await _roleManager.FindByIdAsync(id);
+            var role = await _roleManager.FindByIdAsync(id) ?? throw new NotFoundException("Role not found");
             return (role.Id, role.Name);
         }
 
@@ -211,7 +209,7 @@ namespace TheAbstraction.Infrastructure.Services
         {
             if (roleName != null)
             {
-                var role = await _roleManager.FindByIdAsync(id);
+                var role = await _roleManager.FindByIdAsync(id) ?? throw new NotFoundException("Role not found");
                 role.Name = roleName;
                 var result = await _roleManager.UpdateAsync(role);
                 return result.Succeeded;
@@ -221,7 +219,7 @@ namespace TheAbstraction.Infrastructure.Services
 
         public async Task<bool> UpdateUsersRole(string userName, IList<string> usersRole)
         {
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName) ?? throw new NotFoundException("User not found");
             var existingRoles = await _userManager.GetRolesAsync(user);
             var result = await _userManager.RemoveFromRolesAsync(user, existingRoles);
             result = await _userManager.AddToRolesAsync(user, usersRole);

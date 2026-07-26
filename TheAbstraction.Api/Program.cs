@@ -11,6 +11,7 @@ using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Infrastructure;
 using TheAbstraction.Infrastructure.Data;
 using TheAbstraction.Infrastructure.Services;
+using TheAbstraction.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,16 +39,6 @@ builder.Services.AddSingleton<IMongoClient>(_ => {
     return new MongoClient(connectionString);
 });
 
-builder.Services.AddSingleton<IMongoClient>(_ => {
-    var settings = new MongoClientSettings()
-    {
-        Scheme = ConnectionStringScheme.MongoDB,
-        Server = new MongoServerAddress("localhost", 27017)
-    };
-
-    return new MongoClient(settings);
-});
-
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -73,6 +64,7 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddSingleton<ITokenGenerator>(new TokenGenerator(_key, _issuer, _audience, _expirtyMinutes));
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
 builder.Services.AddSingleton<IItemService, ItemService>();
+builder.Services.AddSingleton<IInventoryService, InventoryService>();
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -148,6 +140,7 @@ using (var scope = app.Services.CreateScope())
 //}
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();

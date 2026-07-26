@@ -1,12 +1,10 @@
-﻿using TheAbstraction.Application.Commands.Role.Create;
-using TheAbstraction.Application.Commands.Role.Update;
-using TheAbstraction.Application.DTOs;
+﻿using TheAbstraction.Application.DTOs;
 using TheAbstraction.Application.Queries.Role;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TheAbstraction.Application.Commands.Role.Delete;
+using TheAbstraction.Application.Commands.Role;
 
 
 namespace TheAbstraction.Api.Controllers

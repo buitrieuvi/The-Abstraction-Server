@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TheAbstraction.Application.DTOs;
+using TheAbstraction.Domain.Entities.NoSQL.Inventory;
 
 namespace TheAbstraction.Application.Mapper
 {
@@ -17,6 +18,8 @@ namespace TheAbstraction.Application.Mapper
             .ForMember(d => d.FullName, o => o.MapFrom(s => s.fullName))
             .ForMember(d => d.UserName, o => o.MapFrom(s => s.userName))
             .ForMember(d => d.Email, o => o.MapFrom(s => s.email));
+
+            CreateMap<Inventory, InventoryResponseDTO>();
         }
     }
 }

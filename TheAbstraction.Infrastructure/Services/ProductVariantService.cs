@@ -11,10 +11,22 @@ namespace TheAbstraction.Infrastructure.Services
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<int> CreateProductVariantAsync(decimal price, int quantity, string model, string color, string size, CancellationToken cancellationToken = default)
+        public async Task<int> CreateProductVariantAsync(string productId, decimal price, int quantity, string model, string color, string size, CancellationToken cancellationToken = default)
         {
+            if (price < 0 || quantity < 0)
+            {
+                throw new BadRequestException("Giá và số lượng không được âm");
+            }
+
+            var productExists = await _context.Products.AnyAsync(x => x.Id == productId, cancellationToken);
+            if (!productExists)
+            {
+                throw new NotFoundException("Không tìm thấy sản phẩm");
+            }
+
             _context.ProductVariants.Add(new ProductVariant
             {
+                ProductId = productId,
                 Price = price,
                 Quantity = quantity,
                 Model = model,
@@ -33,7 +45,7 @@ namespace TheAbstraction.Infrastructure.Services
                 _context.ProductVariants.Remove(productVariant);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                int c = _context.ProductVariants.Where(p => p.ProductId == productVariant.ProductId).Count();
+                int c = await _context.ProductVariants.CountAsync(p => p.ProductId == productVariant.ProductId, cancellationToken);
                 if (c == 0)
                 {
                     var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productVariant.ProductId, cancellationToken);
@@ -59,7 +71,8 @@ namespace TheAbstraction.Infrastructure.Services
                 Quantity = pv.Quantity,
                 Model = pv.Model,
                 Color = pv.Color,
-                Size = pv.Size
+                Size = pv.Size,
+                IsActive = pv.IsActive
             })];
         }
 
@@ -77,7 +90,8 @@ namespace TheAbstraction.Infrastructure.Services
                 Quantity = pv.Quantity,
                 Model = pv.Model,
                 Color = pv.Color,
-                Size = pv.Size
+                Size = pv.Size,
+                IsActive = pv.IsActive
             })];
 
         }
@@ -87,15 +101,23 @@ namespace TheAbstraction.Infrastructure.Services
         {
             var productVariant = await _context.ProductVariants.FirstOrDefaultAsync(pv => pv.Id == id, cancellationToken);
 
-            if (productVariant != null)
+            if (productVariant == null)
             {
-                productVariant.Price = price;
-                productVariant.Quantity = quantity;
-                productVariant.IsActive = isActive;
-                productVariant.Model = model;
-                productVariant.Color = color;
-                productVariant.Size = size;
+                throw new NotFoundException("Không tìm thấy mẫu mã sản phẩm");
             }
+
+            if (price < 0 || quantity < 0)
+            {
+                throw new BadRequestException("Giá và số lượng không được âm");
+            }
+
+            productVariant.Price = price;
+            productVariant.Quantity = quantity;
+            productVariant.IsActive = isActive;
+            productVariant.Model = model;
+            productVariant.Color = color;
+            productVariant.Size = size;
+            productVariant.ModifiedDate = DateTime.UtcNow;
 
             return await _context.SaveChangesAsync(cancellationToken);
         }
@@ -109,11 +131,8 @@ namespace TheAbstraction.Infrastructure.Services
 
         public async Task<decimal> GetPriceProductVariantById(string id, CancellationToken cancellationToken = default)
         {
-            var pv = _context.ProductVariants.First(x => x.Id == id);
-            if (pv == null)
-            {
-                throw new NotFoundException("Không tìm thấy mẫu mã");
-            }
+            var pv = await _context.ProductVariants.FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
+                ?? throw new NotFoundException("Không tìm thấy mẫu mã");
             return pv.Price;
         }
     }

@@ -7,7 +7,7 @@ namespace TheAbstraction.Domain.Entities.NoSQL
 {
     public class Player : BaseEntityNoSQL
     {
-        public string UserId { get; set; }
+        public ObjectId UserId { get; set; }
         public string PlayerName { get; set; }
     }
 }
