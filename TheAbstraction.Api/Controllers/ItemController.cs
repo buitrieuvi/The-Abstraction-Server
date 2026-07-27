@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TheAbstraction.Application.Commands.InventoryItem.Create;
+using TheAbstraction.Application.Commands.Item;
+using TheAbstraction.Application.Queries.Item;
 
 namespace TheAbstraction.Api.Controllers
 {
@@ -22,11 +23,19 @@ namespace TheAbstraction.Api.Controllers
             return Ok(result);
         }
 
-        //[HttpDelete("Delete/{playerId}")]
-        //[ProducesDefaultResponseType(typeof(int))]
-        //public async Task<IActionResult> Delete(string playerId)
-        //{
-        //    return Ok(await _mediator.Send(new DeletePlayerCommand() { PlayerId = playerId }));
-        //}
+        [HttpGet("get")]
+        public async Task<IActionResult> Get()
+        {
+            var result = await _mediator.Send(new GetItemsQuery());
+            return Ok(result);
+        }
+
+        [HttpDelete("delete/{itemId}")]
+        [ProducesDefaultResponseType(typeof(int))]
+        public async Task<ActionResult<int>> Delete(string itemId)
+        {
+            var result = await _mediator.Send(new DeleteItemCommand() { ItemId = itemId});
+            return Ok(result);
+        }
     }
 }

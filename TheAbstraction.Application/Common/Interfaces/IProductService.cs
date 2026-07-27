@@ -1,13 +1,13 @@
-using TheAbstraction.Application.Commands.ProductVariant.Create;
+using TheAbstraction.Application.Commands.ProductVariant;
 using TheAbstraction.Application.DTOs;
 
 namespace TheAbstraction.Application.Common.Interfaces
 {
     public interface IProductService
     {
-        Task<int> CreateAsync(string name, string description, bool isActive, List<CreateProductVariantCommand> productVariants, CancellationToken cancellationToken = default);
-        Task<int> UpdateAsync(string id, string name, string description, bool isActive, CancellationToken cancellationToken = default);
-        Task<int> DeleteAsync(CancellationToken cancellationToken = default);
+        Task<int> CreateAsync(string name, string description, List<CreateProductVariantCommand> productVariants, CancellationToken cancellationToken = default);
+        Task<int> UpdateAsync(string id, string name, string description, CancellationToken cancellationToken = default);
+        Task<int> DeleteAsync(string id, CancellationToken cancellationToken = default);
 
         Task<ProductResponseDTO> GetByIdAsync(string id, CancellationToken cancellationToken = default);
 

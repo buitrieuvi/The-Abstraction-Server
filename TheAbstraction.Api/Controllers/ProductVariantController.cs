@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TheAbstraction.Application.Commands.ProductVariant.Create;
-using TheAbstraction.Application.Commands.ProductVariant.Delete;
-using TheAbstraction.Application.Commands.ProductVariant.Update;
+using TheAbstraction.Application.Commands.ProductVariant;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Application.Queries.ProductVariant;
 
@@ -14,35 +12,39 @@ namespace TheAbstraction.Api.Controllers
     {
         private readonly IMediator _mediator = mediator;
 
-        [HttpGet("GetAll")]
+        [HttpGet("Get")]
         [ProducesDefaultResponseType(typeof(List<ProductVariantResponseDTO>))]
         public async Task<IActionResult> GetProductVariantAsync()
         {
-            return Ok(await _mediator.Send(new GetProductVariantQuery()));
+            var result = await _mediator.Send(new GetProductVariantQuery());
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         [ProducesDefaultResponseType(typeof(List<ProductVariantResponseDTO>))]
         public async Task<IActionResult> GetProductVariantByIdAsync(string id)
         {
-            return Ok(await _mediator.Send(new GetProductVariantByIdQuery() { ProductId = id }));
+            var result = await _mediator.Send(new GetProductVariantQuery());
+            return Ok(result);
         }
 
         [HttpGet("GetPrice/{id}")]
         [ProducesDefaultResponseType(typeof(List<ProductVariantResponseDTO>))]
         public async Task<IActionResult> GetPriceProductVariantById(string id)
         {
-            return Ok(await _mediator.Send(new GetPriceProductVariantByIdQuery() { Id = id }));
+            var result = await _mediator.Send(new GetPriceProductVariantByIdQuery() { Id = id });
+            return Ok(result);
         }
 
         [HttpPost("Create")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<ActionResult<int>> CreateProductVariant([FromBody] CreateProductVariantCommand command)
         {
-            return Ok(await _mediator.Send(command));
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("delete/{id}")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<IActionResult> DeleteProductVariant(string id)
         {

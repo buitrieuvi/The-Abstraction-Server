@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using TheAbstraction.Application.Commands.InventoryItem.Create;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
 using Xunit;
@@ -41,7 +40,7 @@ namespace TheAbstraction.UnitTests.Services
         }
 
         [Fact]
-        public async Task Get_All_Item()
+        public async Task Get_Item()
         {
             using IServiceScope scope = _provider.CreateScope();
 

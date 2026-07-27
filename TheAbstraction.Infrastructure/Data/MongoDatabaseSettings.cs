@@ -4,6 +4,7 @@ public class MongoDatabaseSettings
 { 
     public string PlayerCollectionName { get; set; } = null!;
     public string ItemCollectionName { get; set; } = null!;
+    public string InventoryCollectionName { get; set; } = null!;
 
     public string ConnectionString { get; set; } = null!;
  

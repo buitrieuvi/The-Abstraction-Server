@@ -1,7 +1,7 @@
-﻿using TheAbstraction.Application.Commands.Auth;
-using TheAbstraction.Application.DTOs;
+﻿using TheAbstraction.Application.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TheAbstraction.Application.Commands.Auth;
 
 namespace TheAbstraction.Api.Controllers
 {
@@ -15,7 +15,8 @@ namespace TheAbstraction.Api.Controllers
         [ProducesDefaultResponseType(typeof(AuthResponseDTO))]
         public async Task<IActionResult> Login([FromBody] AuthCommand command)
         {
-            return Ok(await _mediator.Send(command));
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
     }
 }

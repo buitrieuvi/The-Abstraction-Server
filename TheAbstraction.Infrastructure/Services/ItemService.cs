@@ -39,6 +39,20 @@ namespace TheAbstraction.Infrastructure.Services
             return 1;
         }
 
+        public async Task<int> Delete(string itemId, CancellationToken cancellationToken = default)
+        {
+            if (!ObjectId.TryParse(itemId, out var objectId))
+            {
+                throw new BadRequestException("Item ID không hợp lệ");
+            }
+
+            var result = await _itemCollection.DeleteOneAsync(
+                x => x.Id == objectId,
+                cancellationToken);
+
+            return (int)result.DeletedCount;
+        }
+
         public async Task<List<(string id, string itemName)>> GetAll(CancellationToken cancellationToken = default)
         {
             return await _itemCollection
@@ -47,11 +61,5 @@ namespace TheAbstraction.Infrastructure.Services
                 .ToListAsync(cancellationToken);
         }
 
-        //public async Task<int> Delete(string playerId)
-        //{
-        //    var filter = Builders<Player>.Filter.Eq(x => x.Id, new ObjectId(playerId));
-        //    var result = await _itemCollection.DeleteOneAsync(filter);
-        //    return result.IsAcknowledged && result.DeletedCount > 0 ? 1 : 0;
-        //}
     }
 }

@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using TheAbstraction.Application.Commands.ProductVariant.Create;
+using TheAbstraction.Application.Commands.ProductVariant;
 using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Domain.Entities;
+using TheAbstraction.Domain.Repositories.Command.Base;
 using TheAbstraction.Infrastructure.Data;
+using TheAbstraction.Infrastructure.Repository.Command.Base;
 
 namespace TheAbstraction.Infrastructure.Services
 {
@@ -12,20 +14,22 @@ namespace TheAbstraction.Infrastructure.Services
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<int> CreateAsync(
-            string name,
-            string description,
-            bool isActive,
-            List<CreateProductVariantCommand> productVariants,
-            CancellationToken cancellationToken = default)
+
+        public async Task<int> CreateAsync(string name, string description, List<CreateProductVariantCommand> productVariants, CancellationToken cancellationToken = default)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new BadRequestException("Tên sản phẩm là bắt buộc");
+            }
+
+            productVariants ??= [];
             var product = new Product
             {
                 Name = name,
                 Description = description,
-                IsActive = isActive
             };
 
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             _context.Products.Add(product);
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -42,32 +46,37 @@ namespace TheAbstraction.Infrastructure.Services
                 });
             }
 
-            return await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return 1;
         }
 
-        public async Task<int> UpdateAsync(string id, string name, string description, bool isActive, CancellationToken cancellationToken = default)
+        public async Task<int> UpdateAsync(string id, string name, string description, CancellationToken cancellationToken = default)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
+                ?? throw new NotFoundException("Không tìm thấy sản phẩm");
 
             product.Name = name;
             product.Description = description;
-            product.IsActive = isActive;
             product.ModifiedDate = DateTime.UtcNow;
-
-            var result = _context.Products.Update(product);
 
             return await _context.SaveChangesAsync(cancellationToken);
         }
-        public async Task<int> DeleteAsync(CancellationToken cancellationToken = default)
+        public async Task<int> DeleteAsync(string id, CancellationToken cancellationToken = default)
         {
-            _context.ProductVariants.RemoveRange(_context.ProductVariants);
-            _context.Products.RemoveRange(_context.Products);
+            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
+                ?? throw new NotFoundException("Không tìm thấy sản phẩm");
+            var variants = _context.ProductVariants.Where(x => x.ProductId == id);
+
+            _context.ProductVariants.RemoveRange(variants);
+            _context.Products.Remove(product);
 
             return await _context.SaveChangesAsync(cancellationToken);
         }
         public async Task<ProductResponseDTO> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
+                ?? throw new NotFoundException("Không tìm thấy sản phẩm");
             return MapToDto(product);
         }
 
@@ -76,9 +85,6 @@ namespace TheAbstraction.Infrastructure.Services
             Id = product.Id,
             Name = product.Name,
             Description = product.Description,
-            IsActive = product.IsActive,
-            CreatedDate = product.CreatedDate,
-            ModifiedDate = product.ModifiedDate
         };
 
         public async Task<IReadOnlyList<ProductResponseDTO>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -92,13 +98,12 @@ namespace TheAbstraction.Infrastructure.Services
         public async Task<IReadOnlyList<ProductResponseDTO>> GetByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             var products = await _context.Products
-                .Where(x => x.Name.Contains(name))
+                .Where(x => x.Name.Contains(name ?? string.Empty))
                 .OrderBy(x => x.Name)
                 .ToListAsync(cancellationToken);
 
             return [.. products.Select(MapToDto)];
         }
-        
     }
 
 }

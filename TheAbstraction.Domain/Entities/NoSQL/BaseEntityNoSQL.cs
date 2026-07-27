@@ -7,9 +7,8 @@ namespace TheAbstraction.Domain.Entities.NoSQL
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public ObjectId Id { get; set; }
+        public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime ModifiedDate { get; set; } = DateTime.UtcNow;
-        public bool IsActive { get; set; } = true;
     }
 }

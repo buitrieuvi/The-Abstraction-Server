@@ -5,11 +5,13 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;
 using System.Text;
+using TheAbstraction.Api.Middleware;
 using TheAbstraction.Application;
 using TheAbstraction.Application.Common.Interfaces;
-
+using TheAbstraction.Domain.Repositories.Command.Base;
 using TheAbstraction.Infrastructure;
 using TheAbstraction.Infrastructure.Data;
+using TheAbstraction.Infrastructure.Repository.Command.Base;
 using TheAbstraction.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,10 +22,6 @@ var _key = builder.Configuration["Jwt:Key"];
 var _issuer = builder.Configuration["Jwt:Issuer"];
 var _audience = builder.Configuration["Jwt:Audience"];
 var _expirtyMinutes = builder.Configuration["Jwt:ExpiryMinutes"];
-
-//builder.Services.AddAutoMapper(typeof(UserMapper));
-//builder.Services.AddAutoMapper(typeof(UserMapper).Assembly);
-
 
 builder.Services.Configure<TheAbstraction.Infrastructure.Data.MongoDatabaseSettings>(
     builder.Configuration.GetSection("MongoDatabaseSettings")
@@ -36,16 +34,6 @@ builder.Services.AddSingleton<IMongoClient>(_ => {
             .GetSection("MongoDatabaseSettings:ConnectionString")?
             .Value;
     return new MongoClient(connectionString);
-});
-
-builder.Services.AddSingleton<IMongoClient>(_ => {
-    var settings = new MongoClientSettings()
-    {
-        Scheme = ConnectionStringScheme.MongoDB,
-        Server = new MongoServerAddress("localhost", 27017)
-    };
-
-    return new MongoClient(settings);
 });
 
 builder.Services.AddAuthentication(x =>
@@ -73,6 +61,7 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddSingleton<ITokenGenerator>(new TokenGenerator(_key, _issuer, _audience, _expirtyMinutes));
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
 builder.Services.AddSingleton<IItemService, ItemService>();
+builder.Services.AddSingleton<IInventoryService, InventoryService>();
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -93,6 +82,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+
+//builder.Services.AddScoped(typeof(ICommandRepository<>), typeof(CommandRepository<>));
 
 //builder.Services.AddSwaggerGen(options =>
 //{
@@ -148,6 +139,7 @@ using (var scope = app.Services.CreateScope())
 //}
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();

@@ -3,28 +3,35 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TheAbstraction.Application.Commands.Order.Create;
-using TheAbstraction.Application.Commands.Order.Update;
+using TheAbstraction.Application.Commands.Order;
+using TheAbstraction.Domain.Entities;
+
 namespace TheAbstraction.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-[Authorize(Roles = "user , admin")]
+// [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+// [Authorize(Roles = "user , admin")]
 public class OrderController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
+
     [HttpPost("create")]
     [ProducesDefaultResponseType(typeof(int))]
     public async Task<ActionResult<int>> Create([FromBody] CreateOrderCommand command)
     {
-        return Ok(await _mediator.Send(command));
+        var result = await _mediator.Send(command);
+        return Ok(result);
     }
-    [HttpPost("edit")]
+
+    [HttpPut("editStatus/{orderId}")]
     [ProducesDefaultResponseType(typeof(int))]
-    public async Task<ActionResult<int>> UpdateOrderStatus([FromBody] UpdateOrderStatusCommand command)
+    public async Task<ActionResult<int>> UpdateOrderStatus(string orderId, [FromBody] string newStatus)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        command.UserId = userId;
-        return Ok(await _mediator.Send(command));
+        var result = await _mediator.Send(new UpdateOrderStatusCommand()
+        {
+            OrderId = orderId,
+            NewStatus = newStatus
+        });
+        return Ok(result);
     }
 }

@@ -2,9 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TheAbstraction.Application.Commands.Product.Create;
-using TheAbstraction.Application.Commands.Product.Delete;
-using TheAbstraction.Application.Commands.Product.Update;
+using TheAbstraction.Application.Commands.Product;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Application.Queries.Product;
 
@@ -23,28 +21,32 @@ namespace TheAbstraction.Api.Controllers
         [ProducesDefaultResponseType(typeof(List<ProductResponseDTO>))]
         public async Task<IActionResult> GetProductAsync()
         {
-            return Ok(await _mediator.Send(new GetProductQuery()));
+            var result = await _mediator.Send(new GetProductQuery());
+            return Ok(result);
         }
 
         [HttpGet("get/{id}")]
         [ProducesDefaultResponseType(typeof(RoleResponseDTO))]
         public async Task<IActionResult> GetRoleByIdAsync(string id)
         {
-            return Ok(await _mediator.Send(new GetProductByIdQuery() { Id = id }));
+            var result = await _mediator.Send(new GetProductByIdQuery() { Id = id });
+            return Ok(result);
         }
 
         [HttpGet("getByName/{name}")]
         [ProducesDefaultResponseType(typeof(List<ProductResponseDTO>))]
         public async Task<IActionResult> GetProductByNameAsync(string name)
         {
-            return Ok(await _mediator.Send(new GetProductByNameQuery() { Name = name }));
+            var result = await _mediator.Send(new GetProductByNameQuery() { Name = name });
+            return Ok(result);
         }
 
         [HttpPost("create")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<ActionResult<int>> Create([FromBody] CreateProductCommand command)
         {
-            return Ok(await _mediator.Send(command));
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         [HttpPost("createRange")]
@@ -60,18 +62,18 @@ namespace TheAbstraction.Api.Controllers
         }
 
 
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{id}")]
         [ProducesDefaultResponseType(typeof(int))]
-        public async Task<IActionResult> DeleteProductAsync()
+        public async Task<IActionResult> DeleteProductAsync(string id)
         {
-            return Ok(await _mediator.Send(new DeleteProductCommand()));
+            var result = await _mediator.Send(new DeleteProductCommand { Id = id });
+            return Ok(result);
         }
 
         [HttpPut("edit")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<ActionResult> EditProduct(string id, [FromBody] UpdateProductCommand command)
         {
-
             if (id == command.Id)
             {
                 var result = await _mediator.Send(command);
