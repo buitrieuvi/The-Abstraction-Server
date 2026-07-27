@@ -72,7 +72,6 @@ namespace TheAbstraction.Infrastructure.Services
                 Model = pv.Model,
                 Color = pv.Color,
                 Size = pv.Size,
-                IsActive = pv.IsActive
             })];
         }
 
@@ -91,7 +90,6 @@ namespace TheAbstraction.Infrastructure.Services
                 Model = pv.Model,
                 Color = pv.Color,
                 Size = pv.Size,
-                IsActive = pv.IsActive
             })];
 
         }
@@ -113,7 +111,6 @@ namespace TheAbstraction.Infrastructure.Services
 
             productVariant.Price = price;
             productVariant.Quantity = quantity;
-            productVariant.IsActive = isActive;
             productVariant.Model = model;
             productVariant.Color = color;
             productVariant.Size = size;

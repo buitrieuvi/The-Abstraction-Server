@@ -20,6 +20,7 @@ namespace TheAbstraction.Application.Mapper
             .ForMember(d => d.Email, o => o.MapFrom(s => s.email));
 
             CreateMap<Inventory, InventoryResponseDTO>();
+            CreateMap<(string id, string fullName, string userName, string email), AuthResponseDTO>();
         }
     }
 }

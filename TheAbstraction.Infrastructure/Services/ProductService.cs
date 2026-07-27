@@ -4,7 +4,9 @@ using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Domain.Entities;
+using TheAbstraction.Domain.Repositories.Command.Base;
 using TheAbstraction.Infrastructure.Data;
+using TheAbstraction.Infrastructure.Repository.Command.Base;
 
 namespace TheAbstraction.Infrastructure.Services
 {
@@ -12,12 +14,8 @@ namespace TheAbstraction.Infrastructure.Services
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<int> CreateAsync(
-            string name,
-            string description,
-            bool isActive,
-            List<CreateProductVariantCommand> productVariants,
-            CancellationToken cancellationToken = default)
+
+        public async Task<int> CreateAsync(string name, string description, List<CreateProductVariantCommand> productVariants, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -29,7 +27,6 @@ namespace TheAbstraction.Infrastructure.Services
             {
                 Name = name,
                 Description = description,
-                IsActive = isActive
             };
 
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
@@ -54,14 +51,13 @@ namespace TheAbstraction.Infrastructure.Services
             return 1;
         }
 
-        public async Task<int> UpdateAsync(string id, string name, string description, bool isActive, CancellationToken cancellationToken = default)
+        public async Task<int> UpdateAsync(string id, string name, string description, CancellationToken cancellationToken = default)
         {
             var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
                 ?? throw new NotFoundException("Không tìm thấy sản phẩm");
 
             product.Name = name;
             product.Description = description;
-            product.IsActive = isActive;
             product.ModifiedDate = DateTime.UtcNow;
 
             return await _context.SaveChangesAsync(cancellationToken);
@@ -89,7 +85,6 @@ namespace TheAbstraction.Infrastructure.Services
             Id = product.Id,
             Name = product.Name,
             Description = product.Description,
-            IsActive = product.IsActive
         };
 
         public async Task<IReadOnlyList<ProductResponseDTO>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -109,7 +104,6 @@ namespace TheAbstraction.Infrastructure.Services
 
             return [.. products.Select(MapToDto)];
         }
-        
     }
 
 }

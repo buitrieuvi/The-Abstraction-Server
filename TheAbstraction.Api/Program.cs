@@ -5,13 +5,14 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;
 using System.Text;
+using TheAbstraction.Api.Middleware;
 using TheAbstraction.Application;
 using TheAbstraction.Application.Common.Interfaces;
-
+using TheAbstraction.Domain.Repositories.Command.Base;
 using TheAbstraction.Infrastructure;
 using TheAbstraction.Infrastructure.Data;
+using TheAbstraction.Infrastructure.Repository.Command.Base;
 using TheAbstraction.Infrastructure.Services;
-using TheAbstraction.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,10 +22,6 @@ var _key = builder.Configuration["Jwt:Key"];
 var _issuer = builder.Configuration["Jwt:Issuer"];
 var _audience = builder.Configuration["Jwt:Audience"];
 var _expirtyMinutes = builder.Configuration["Jwt:ExpiryMinutes"];
-
-//builder.Services.AddAutoMapper(typeof(UserMapper));
-//builder.Services.AddAutoMapper(typeof(UserMapper).Assembly);
-
 
 builder.Services.Configure<TheAbstraction.Infrastructure.Data.MongoDatabaseSettings>(
     builder.Configuration.GetSection("MongoDatabaseSettings")
@@ -85,6 +82,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+
+//builder.Services.AddScoped(typeof(ICommandRepository<>), typeof(CommandRepository<>));
 
 //builder.Services.AddSwaggerGen(options =>
 //{

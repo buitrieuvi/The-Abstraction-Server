@@ -9,7 +9,6 @@ public class CreateProductCommand : IRequest<int>
 {
     public string Name { get; set; }
     public string Description { get; set; }
-    public bool IsActive { get; set; } = true;
 
     public List<CreateProductVariantCommand> ProductVariant { get; set; }
 }
@@ -20,6 +19,6 @@ public class CreateProductCommandHandler(IProductService productService) : IRequ
 
     public Task<int> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
-        return _productService.CreateAsync(request.Name, request.Description, request.IsActive, request.ProductVariant, cancellationToken);
+        return _productService.CreateAsync(request.Name, request.Description, request.ProductVariant, cancellationToken);
     }
 }

@@ -26,7 +26,7 @@ namespace TheAbstraction.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPut("{playerId}/items/{itemId}")]
+        [HttpPut("edit/{playerId}/items/{itemId}")]
         [ProducesDefaultResponseType(typeof(int))]
         public async Task<ActionResult<int>> UpdateItem(string playerId, string itemId, [FromBody] int quantity)
         {

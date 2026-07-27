@@ -49,7 +49,7 @@ namespace TheAbstraction.Infrastructure.Services
                 if (!variants.TryGetValue(item.ProductVariantId, out var variant))
                     throw new NotFoundException($"Không tìm thấy mẫu mã sản phẩm {item.ProductVariantId}");
 
-                if (!variant.IsActive || variant.Quantity < item.Quantity)
+                if (variant.Quantity < item.Quantity)
                 {
                     throw new BadRequestException("Sản phẩm không còn đủ tồn kho");
                 }

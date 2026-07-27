@@ -10,11 +10,11 @@ namespace TheAbstraction.Domain.Entities
     {
         // [Key]
         // [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime ModifiedDate { get; set; } = DateTime.UtcNow;
-        public bool IsActive { get; set; } = true;
     }
 }
