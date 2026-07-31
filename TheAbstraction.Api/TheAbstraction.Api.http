@@ -1,3 +1,13 @@
+@TheAbstraction.Api_HostAddress = http://localhost:5152
 
 GET https://localhost:7219/api/Product/GetAll
 Accept: application/json
+
+GET {{TheAbstraction.Api_HostAddress}}/api/inventory/get
+
+###
+
+GET {{TheAbstraction.Api_HostAddress}}/api/role/get
+
+###
+
