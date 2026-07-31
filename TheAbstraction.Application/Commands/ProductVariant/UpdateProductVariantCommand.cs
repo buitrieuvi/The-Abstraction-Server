@@ -20,7 +20,6 @@ public class UpdateProductVariantCommandHandler(IProductVariantService productVa
 
     public async Task<int> Handle(UpdateProductVariantCommand request, CancellationToken cancellationToken)
     {
-        return await _productVariantService.UpdateProductVariantAsync(request.Id, request.Price, request.Quantity, request.IsActive,
-         request.Model, request.Color, request.Size, cancellationToken);
+        return await _productVariantService.UpdateProductVariantAsync(request.Id, request.Price, request.Quantity, request.Model, request.Color, request.Size, cancellationToken);
     }
 }

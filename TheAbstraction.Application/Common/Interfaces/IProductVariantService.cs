@@ -12,12 +12,13 @@ namespace TheAbstraction.Application.Common.Interfaces
             string size,
             CancellationToken cancellationToken = default);
         Task<int> DeleteProductVariantAsync(string id, CancellationToken cancellationToken = default);
-        Task<int> UpdateProductVariantAsync(string id, decimal price, int quantity, bool isActive,
+        Task<int> UpdateProductVariantAsync(string id, decimal price, int quantity,
             string model,
             string color,
             string size,
             CancellationToken cancellationToken = default);
 
         Task<decimal> GetPriceProductVariantById(string id, CancellationToken cancellationToken = default);
+        Task<ProductVariantResponseDTO> GetProductVariantById(string id, CancellationToken cancellationToken = default);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
@@ -7,9 +8,10 @@ using TheAbstraction.Infrastructure.Data;
 
 namespace TheAbstraction.Infrastructure.Services
 {
-    public class ProductVariantService(ApplicationDbContext context) : IProductVariantService
+    public class ProductVariantService(ApplicationDbContext context, IMapper mapper) : IProductVariantService
     {
         private readonly ApplicationDbContext _context = context;
+        private readonly IMapper _mapper = mapper;
 
         public async Task<int> CreateProductVariantAsync(string productId, decimal price, int quantity, string model, string color, string size, CancellationToken cancellationToken = default)
         {
@@ -75,7 +77,8 @@ namespace TheAbstraction.Infrastructure.Services
             })];
         }
 
-        public async Task<IReadOnlyList<ProductVariantResponseDTO>> GetProductVariantByProductIdAsync(string productId, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<ProductVariantResponseDTO>> GetProductVariantByProductIdAsync(string productId, 
+            CancellationToken cancellationToken = default)
         {
             var productVariants = await _context.ProductVariants
                 .Where(pv => pv.ProductId == productId)
@@ -94,10 +97,11 @@ namespace TheAbstraction.Infrastructure.Services
 
         }
 
-        public async Task<int> UpdateProductVariantAsync(string id, decimal price, int quantity, bool isActive,
+        public async Task<int> UpdateProductVariantAsync(string id, decimal price, int quantity,
          string model, string color, string size, CancellationToken cancellationToken = default)
         {
-            var productVariant = await _context.ProductVariants.FirstOrDefaultAsync(pv => pv.Id == id, cancellationToken);
+            var productVariant = await _context.ProductVariants
+                .FirstOrDefaultAsync(pv => pv.Id == id, cancellationToken);
 
             if (productVariant == null)
             {
@@ -131,6 +135,14 @@ namespace TheAbstraction.Infrastructure.Services
             var pv = await _context.ProductVariants.FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
                 ?? throw new NotFoundException("Không tìm thấy mẫu mã");
             return pv.Price;
+        }
+
+        public async Task<ProductVariantResponseDTO> GetProductVariantById(string id, CancellationToken cancellationToken = default)
+        {
+            var pv = await _context.ProductVariants.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+            if (pv == null) throw new NotFoundException();
+            return _mapper.Map<ProductVariantResponseDTO>(pv);
         }
     }
 }

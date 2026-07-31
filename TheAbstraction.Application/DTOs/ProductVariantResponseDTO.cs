@@ -15,7 +15,6 @@ namespace TheAbstraction.Application.DTOs
         public string Model { get; set; }
         public string Color { get; set; }
         public string Size { get; set; }
-        public bool IsActive { get; set; }
 
     }
 }

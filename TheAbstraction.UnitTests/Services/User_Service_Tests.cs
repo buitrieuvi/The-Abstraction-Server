@@ -9,7 +9,7 @@ using Xunit;
 using Xunit.Abstractions;
 
 namespace TheAbstraction.UnitTests.Services;
-public class User_Service_Tests : IClassFixture<CustomWebApplicationFactory>
+    public class User_Service_Tests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly IServiceProvider _provider;
     private readonly HttpClient _client;
@@ -45,7 +45,7 @@ public class User_Service_Tests : IClassFixture<CustomWebApplicationFactory>
         _output.WriteLine(pretty);
     }
 
-    [Fact]  
+    [Fact]
     public async Task Get_All_User_Details()
     {
         using var scope = _provider.CreateScope();
