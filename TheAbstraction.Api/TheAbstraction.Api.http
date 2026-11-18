@@ -11,3 +11,10 @@ GET {{TheAbstraction.Api_HostAddress}}/api/role/get
 
 ###
 
+POST {{TheAbstraction.Api_HostAddress}}/api/role/create
+Content-Type: application/json
+{
+    "roleName" : "admin"
+}
+
+###

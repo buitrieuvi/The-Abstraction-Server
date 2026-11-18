@@ -1,10 +1,11 @@
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Configuration;
 using System.Text;
+
 using TheAbstraction.Api.Middleware;
 using TheAbstraction.Application;
 using TheAbstraction.Application.Common.Interfaces;
@@ -16,49 +17,70 @@ using TheAbstraction.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Controllers
 builder.Services.AddControllers();
 
-var _key = builder.Configuration["Jwt:Key"];
-var _issuer = builder.Configuration["Jwt:Issuer"];
-var _audience = builder.Configuration["Jwt:Audience"];
-var _expirtyMinutes = builder.Configuration["Jwt:ExpiryMinutes"];
+// JWT Configuration
+var key = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("Jwt:Key is missing.");
 
+var issuer = builder.Configuration["Jwt:Issuer"];
+var audience = builder.Configuration["Jwt:Audience"];
+var expiryMinutes = builder.Configuration["Jwt:ExpiryMinutes"];
+
+// MongoDB Configuration
 builder.Services.Configure<TheAbstraction.Infrastructure.Data.MongoDatabaseSettings>(
     builder.Configuration.GetSection("MongoDatabaseSettings")
-  );
+);
 
-builder.Services.AddSingleton<IMongoClient>(_ => {
-    var connectionString = 
-        builder
-            .Configuration
-            .GetSection("MongoDatabaseSettings:ConnectionString")?
-            .Value;
+builder.Services.AddSingleton<IMongoClient>(_ =>
+{
+    var connectionString = builder.Configuration[
+        "MongoDatabaseSettings:ConnectionString"
+    ];
+
+    if (string.IsNullOrWhiteSpace(connectionString))
+        throw new InvalidOperationException("MongoDB connection string is missing.");
+
     return new MongoClient(connectionString);
 });
 
-builder.Services.AddAuthentication(x =>
+// JWT Authentication
+builder.Services.AddAuthentication(options =>
 {
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(x =>
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
 {
-    x.RequireHttpsMetadata = false;
-    x.SaveToken = true;
-    x.TokenValidationParameters = new TokenValidationParameters
+    options.RequireHttpsMetadata = true;
+    options.SaveToken = true;
+
+    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidAudience = _audience,
-        ValidIssuer = _issuer,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key)),
-        ClockSkew = TimeSpan.FromMinutes(Convert.ToDouble(_expirtyMinutes))
+
+        ValidIssuer = issuer,
+        ValidAudience = audience,
+
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(key)
+        ),
+
+        ClockSkew = TimeSpan.Zero
     };
 });
 
-builder.Services.AddSingleton<ITokenGenerator>(new TokenGenerator(_key, _issuer, _audience, _expirtyMinutes));
+// Token Generator
+builder.Services.AddSingleton<ITokenGenerator>(
+    new TokenGenerator(key, issuer, audience, expiryMinutes)
+);
+
+// Application Services
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
 builder.Services.AddSingleton<IItemService, ItemService>();
 builder.Services.AddSingleton<IInventoryService, InventoryService>();
@@ -66,11 +88,12 @@ builder.Services.AddSingleton<IInventoryService, InventoryService>();
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", builder =>
+    options.AddPolicy("CorsPolicy", policy =>
     {
-        builder
+        policy
             .WithOrigins("https://localhost:7219")
             .AllowAnyMethod()
             .AllowAnyHeader()
@@ -78,75 +101,99 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Dependency Injection
 builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 
-//builder.Services.AddScoped(typeof(ICommandRepository<>), typeof(CommandRepository<>));
+builder.Services.AddScoped(
+    typeof(ICommandRepository<>),
+    typeof(CommandRepository<>)
+);
 
-//builder.Services.AddSwaggerGen(options =>
-//{
-//    options.SwaggerDoc("v1", new OpenApiInfo
-//    {
-//        Title = "API",
-//        Version = "v1"
-//    });
+// Swagger Configuration
+builder.Services.AddEndpointsApiExplorer();
 
-//    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-//    {
-//        ItemName = "Authorization",
-//        Type = SecuritySchemeType.Http,
-//        Scheme = "bearer",
-//        BearerFormat = "JWT",
-//        In = ParameterLocation.Header,
-//        Description = "Nhập JWT theo dạng: Bearer {token}"
-//    });
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "TheAbstraction API",
+        Version = "v1",
+        Description = "API Documentation"
+    });
 
-//    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-//    {
-//        {
-//            new OpenApiSecurityScheme
-//            {
-//                Reference = new OpenApiReference
-//                {
-//                    Type = ReferenceType.SecurityScheme,
-//                    UserId = "Bearer"
-//                }
-//            },
-//            Array.Empty<string>()
-//        }
-//    });
-//});
+    // JWT Bearer Authentication
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter your JWT token."
+    });
 
-
-//builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
+// Database Migration
 using (var scope = app.Services.CreateScope())
 {
-   var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-   await dbContext.Database.MigrateAsync();
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<ApplicationDbContext>();
+
+    await dbContext.Database.MigrateAsync();
 }
 
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
+// Swagger Middleware
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
 
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint(
+            "/swagger/v1/swagger.json",
+            "TheAbstraction API v1"
+        );
+
+        options.RoutePrefix = "swagger";
+    });
+}
+
+// Middleware Pipeline
 app.UseHttpsRedirection();
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseCors("CorsPolicy");
+
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
 public partial class Program
 {
 }
