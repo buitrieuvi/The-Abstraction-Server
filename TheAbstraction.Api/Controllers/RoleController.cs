@@ -19,7 +19,7 @@ namespace TheAbstraction.Api.Controllers
 
         [HttpPost("create")]
         [ProducesDefaultResponseType(typeof(int))]
-        public async Task<ActionResult> CreateRoleAsync([FromBody] RoleCreateCommand command)
+        public async Task<ActionResult> CreateRole([FromBody] RoleCreateCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
@@ -27,7 +27,7 @@ namespace TheAbstraction.Api.Controllers
 
         [HttpGet("get")]
         [ProducesDefaultResponseType(typeof(List<RoleResponseDTO>))]
-        public async Task<IActionResult> GetRoleAsync()
+        public async Task<IActionResult> GetRole()
         {
             var result = await _mediator.Send(new GetRoleQuery());
             return Ok(result);
@@ -36,7 +36,7 @@ namespace TheAbstraction.Api.Controllers
 
         [HttpGet("get/{id}")]
         [ProducesDefaultResponseType(typeof(RoleResponseDTO))]
-        public async Task<IActionResult> GetRoleByIdAsync(string id)
+        public async Task<IActionResult> GetRoleById(string id)
         {
 
             var result = await _mediator.Send(new GetRoleByIdQuery() { RoleId = id });
@@ -45,7 +45,7 @@ namespace TheAbstraction.Api.Controllers
 
         [HttpDelete("delete")]
         [ProducesDefaultResponseType(typeof(int))]
-        public async Task<IActionResult> DeleteRoleAsync([FromBody] DeleteRoleCommand command)
+        public async Task<IActionResult> DeleteRole([FromBody] DeleteRoleCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

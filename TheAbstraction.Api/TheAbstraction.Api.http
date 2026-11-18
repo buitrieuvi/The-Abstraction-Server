@@ -1,20 +1,47 @@
-@TheAbstraction.Api_HostAddress = http://localhost:5152
 
-GET https://localhost:7219/api/Product/GetAll
+@TheAbstraction.Api_HostAddress = http://localhost:5152
+@roleId = ""
+
+### 1. GET - Lấy danh sách Role
+GET {{TheAbstraction.Api_HostAddress}}/api/role/get
 Accept: application/json
 
-GET {{TheAbstraction.Api_HostAddress}}/api/inventory/get
+###
+
+### 2. GET - Lấy Role theo ID
+# GET {{TheAbstraction.Api_HostAddress}}/api/role/get/{{roleId}}
+# Accept: application/json
 
 ###
 
-GET {{TheAbstraction.Api_HostAddress}}/api/role/get
-
-###
-
+### 3. POST - Tạo Role
 POST {{TheAbstraction.Api_HostAddress}}/api/role/create
 Content-Type: application/json
+Accept: application/json
+
 {
-    "roleName" : "admin"
+    "roleName": "Admin"
+}
+###
+
+### 4. PUT - Cập nhật Role
+PUT {{TheAbstraction.Api_HostAddress}}/api/role/edit
+Content-Type: application/json
+Accept: application/json
+{
+    "roleId": "{{roleId}}",
+    "roleName": "Management"
+}
+
+###
+
+### 5. DELETE - Xóa Role
+DELETE {{TheAbstraction.Api_HostAddress}}/api/role/delete
+Content-Type: application/json
+Accept: application/json
+
+{
+    "roleId": "{{roleId}}"
 }
 
 ###
