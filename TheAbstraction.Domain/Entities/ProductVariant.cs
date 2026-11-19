@@ -1,15 +1,16 @@
+#nullable enable
 using System.ComponentModel.DataAnnotations;
 
 namespace TheAbstraction.Domain.Entities
 {
     public class ProductVariant : BaseEntity
     {
-        public string ProductId { get; set; }
+        public string ProductId { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public int Quantity { get; set; }
-        public string Model { get; set; }
-        public string Color { get; set; }
-        public string Size { get; set; }
+        public string? Model { get; set; }
+        public string? Color { get; set; }
+        public string? Size { get; set; }
 
     }
 }

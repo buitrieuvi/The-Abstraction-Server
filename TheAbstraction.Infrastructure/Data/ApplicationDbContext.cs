@@ -18,6 +18,10 @@ namespace TheAbstraction.Infrastructure.Data
             modelBuilder.Entity<Order>()
                 .Property(x => x.TotalPrice)
                 .HasPrecision(18, 2);
+            modelBuilder.Entity<Order>()
+                .Property(x => x.OrderStatus)
+                .HasMaxLength(50)
+                .IsRequired();
 
             modelBuilder.Entity<OrderDetail>()
                 .Property(x => x.Price)
@@ -26,6 +30,16 @@ namespace TheAbstraction.Infrastructure.Data
             modelBuilder.Entity<ProductVariant>()
                 .Property(x => x.Price)
                 .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Product>().Property(x => x.Name).HasMaxLength(200).IsRequired();
+            modelBuilder.Entity<Product>().Property(x => x.Description).HasMaxLength(1000);
+            modelBuilder.Entity<Product>().HasIndex(x => x.Name);
+            modelBuilder.Entity<ProductVariant>().Property(x => x.Model).HasMaxLength(50);
+            modelBuilder.Entity<ProductVariant>().Property(x => x.Color).HasMaxLength(50);
+            modelBuilder.Entity<ProductVariant>().Property(x => x.Size).HasMaxLength(20);
+            modelBuilder.Entity<Product>().HasMany<ProductVariant>().WithOne()
+                .HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<ProductVariant>().HasIndex(x => x.ProductId);
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);

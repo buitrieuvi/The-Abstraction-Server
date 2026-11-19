@@ -4,18 +4,18 @@ using TheAbstraction.Application.DTOs;
 
 namespace TheAbstraction.Application.Queries.ProductVariant
 {
-    public class GetProductVariantByIdQuery : IRequest<IReadOnlyList<ProductVariantResponseDTO>>
+    public class GetProductVariantByIdQuery : IRequest<ProductVariantResponseDTO>
     {
-        public string ProductId { get; set; }
+        public string Id { get; set; } = string.Empty;
     }
 
-    public class GetProductVariantByIdQueryHandler(IProductVariantService productVariantService) : IRequestHandler<GetProductVariantByIdQuery, IReadOnlyList<ProductVariantResponseDTO>>
+    public class GetProductVariantByIdQueryHandler(IProductVariantService productVariantService) : IRequestHandler<GetProductVariantByIdQuery, ProductVariantResponseDTO>
     {
         private readonly IProductVariantService _productVariantService = productVariantService;
 
-        public async Task<IReadOnlyList<ProductVariantResponseDTO>> Handle(GetProductVariantByIdQuery request, CancellationToken cancellationToken)
+        public Task<ProductVariantResponseDTO> Handle(GetProductVariantByIdQuery request, CancellationToken cancellationToken)
         {
-            return await _productVariantService.GetProductVariantByProductIdAsync(request.ProductId, cancellationToken);
+            return _productVariantService.GetProductVariantById(request.Id, cancellationToken);
         }
     }
 

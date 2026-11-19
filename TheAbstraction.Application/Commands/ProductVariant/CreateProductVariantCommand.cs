@@ -1,22 +1,26 @@
-﻿using MediatR;
+﻿#nullable enable
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TheAbstraction.Application.Common.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace TheAbstraction.Application.Commands.ProductVariant
 {
     public class CreateProductVariantCommand : IRequest<int>
     {
-        public string ProductId { get; set; }
+        public string ProductId { get; set; } = string.Empty;
+        [Range(typeof(decimal), "0", "79228162514264337593543950335")]
         public decimal Price { get; set; }
+        [Range(0, int.MaxValue)]
         public int Quantity { get; set; }
 
-        public string Model { get; set; }
-        public string Color { get; set; }
-        public string Size { get; set; }
+        [StringLength(50)] public string? Model { get; set; }
+        [StringLength(50)] public string? Color { get; set; }
+        [StringLength(20)] public string? Size { get; set; }
 
     }
 

@@ -1,14 +1,18 @@
+﻿#nullable enable
 using TheAbstraction.Application.Common.Interfaces;
 using TheAbstraction.Application.DTOs;
 using MediatR;
+using System.ComponentModel.DataAnnotations;
 
 namespace TheAbstraction.Application.Commands.Product
 {
     public class UpdateProductCommand : IRequest<int>
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string Id { get; set; } = string.Empty;
+        [Required, StringLength(200, MinimumLength = 1)]
+        public string Name { get; set; } = string.Empty;
+        [StringLength(1000)]
+        public string? Description { get; set; }
         public int StockQuantity { get; set; }
     }
 

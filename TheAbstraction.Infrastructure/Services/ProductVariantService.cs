@@ -13,7 +13,7 @@ namespace TheAbstraction.Infrastructure.Services
         private readonly ApplicationDbContext _context = context;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<int> CreateProductVariantAsync(string productId, decimal price, int quantity, string model, string color, string size, CancellationToken cancellationToken = default)
+        public async Task<int> CreateProductVariantAsync(string productId, decimal price, int quantity, string? model, string? color, string? size, CancellationToken cancellationToken = default)
         {
             if (price < 0 || quantity < 0)
             {
@@ -40,30 +40,15 @@ namespace TheAbstraction.Infrastructure.Services
 
         public async Task<int> DeleteProductVariantAsync(string id, CancellationToken cancellationToken = default)
         {
-            var productVariant = await _context.ProductVariants.FirstOrDefaultAsync(pv => pv.Id == id, cancellationToken);
-
-            if (productVariant != null)
-            {
-                _context.ProductVariants.Remove(productVariant);
-                await _context.SaveChangesAsync(cancellationToken);
-
-                int c = await _context.ProductVariants.CountAsync(p => p.ProductId == productVariant.ProductId, cancellationToken);
-                if (c == 0)
-                {
-                    var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productVariant.ProductId, cancellationToken);
-                    if (product != null)
-                    {
-                        _context.Products.Remove(product);
-                    }
-                }
-
-            }
+            var productVariant = await _context.ProductVariants.FirstOrDefaultAsync(pv => pv.Id == id, cancellationToken)
+                ?? throw new NotFoundException("Không tìm thấy mẫu mã sản phẩm");
+            _context.ProductVariants.Remove(productVariant);
             return await _context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<IReadOnlyList<ProductVariantResponseDTO>> GetProductVariantAsync(CancellationToken cancellationToken = default)
         {
-            var productVariants = await _context.ProductVariants.ToListAsync(cancellationToken);
+            var productVariants = await _context.ProductVariants.AsNoTracking().ToListAsync(cancellationToken);
 
             return [.. productVariants.Select(pv => new ProductVariantResponseDTO
             {
@@ -80,7 +65,7 @@ namespace TheAbstraction.Infrastructure.Services
         public async Task<IReadOnlyList<ProductVariantResponseDTO>> GetProductVariantByProductIdAsync(string productId, 
             CancellationToken cancellationToken = default)
         {
-            var productVariants = await _context.ProductVariants
+            var productVariants = await _context.ProductVariants.AsNoTracking()
                 .Where(pv => pv.ProductId == productId)
                 .ToListAsync(cancellationToken);
 
@@ -98,7 +83,7 @@ namespace TheAbstraction.Infrastructure.Services
         }
 
         public async Task<int> UpdateProductVariantAsync(string id, decimal price, int quantity,
-         string model, string color, string size, CancellationToken cancellationToken = default)
+         string? model, string? color, string? size, CancellationToken cancellationToken = default)
         {
             var productVariant = await _context.ProductVariants
                 .FirstOrDefaultAsync(pv => pv.Id == id, cancellationToken);
@@ -139,9 +124,8 @@ namespace TheAbstraction.Infrastructure.Services
 
         public async Task<ProductVariantResponseDTO> GetProductVariantById(string id, CancellationToken cancellationToken = default)
         {
-            var pv = await _context.ProductVariants.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-
-            if (pv == null) throw new NotFoundException();
+            var pv = await _context.ProductVariants.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
+                ?? throw new NotFoundException("Không tìm thấy mẫu mã sản phẩm");
             return _mapper.Map<ProductVariantResponseDTO>(pv);
         }
     }

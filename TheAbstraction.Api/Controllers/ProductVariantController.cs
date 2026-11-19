@@ -1,71 +1,58 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TheAbstraction.Application.Commands.ProductVariant;
 using TheAbstraction.Application.DTOs;
 using TheAbstraction.Application.Queries.ProductVariant;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
-namespace TheAbstraction.Api.Controllers
+namespace TheAbstraction.Api.Controllers;
+
+[Route("api/products/variants")]
+[ApiController]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(Roles = "admin")]
+public class ProductVariantController(IMediator mediator) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductVariantController(IMediator mediator) : ControllerBase
+    [HttpGet]
+    [ProducesResponseType(typeof(IReadOnlyList<ProductVariantResponseDTO>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<ProductVariantResponseDTO>>> GetAll(CancellationToken cancellationToken) =>
+        Ok(await mediator.Send(new GetProductVariantQuery(), cancellationToken));
+
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ProductVariantResponseDTO), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ProductVariantResponseDTO>> GetById(string id, CancellationToken cancellationToken) =>
+        Ok(await mediator.Send(new GetProductVariantByIdQuery { Id = id }, cancellationToken));
+
+    [HttpGet("by-product/{productId}")]
+    [ProducesResponseType(typeof(IReadOnlyList<ProductVariantResponseDTO>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<ProductVariantResponseDTO>>> GetByProduct(string productId, CancellationToken cancellationToken) =>
+        Ok(await mediator.Send(new GetProductVariantsByProductIdQuery { ProductId = productId }, cancellationToken));
+
+    [HttpGet("{id}/price")]
+    public async Task<ActionResult<decimal>> GetPrice(string id, CancellationToken cancellationToken) =>
+        Ok(await mediator.Send(new GetPriceProductVariantByIdQuery { Id = id }, cancellationToken));
+
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<IActionResult> Create([FromBody] CreateProductVariantCommand command, CancellationToken cancellationToken)
     {
-        private readonly IMediator _mediator = mediator;
+        await mediator.Send(command, cancellationToken);
+        return StatusCode(StatusCodes.Status201Created);
+    }
 
-        [HttpGet("Get")]
-        [ProducesDefaultResponseType(typeof(List<ProductVariantResponseDTO>))]
-        public async Task<IActionResult> GetProductVariantAsync()
-        {
-            var result = await _mediator.Send(new GetProductVariantQuery());
-            return Ok(result);
-        }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateProductVariantCommand command, CancellationToken cancellationToken)
+    {
+        command.Id = id;
+        await mediator.Send(command, cancellationToken);
+        return NoContent();
+    }
 
-        [HttpGet("{id}")]
-        [ProducesDefaultResponseType(typeof(List<ProductVariantResponseDTO>))]
-        public async Task<IActionResult> GetProductVariantByIdAsync(string id)
-        {
-            var result = await _mediator.Send(new GetProductVariantQuery());
-            return Ok(result);
-        }
-
-        [HttpGet("GetPrice/{id}")]
-        [ProducesDefaultResponseType(typeof(List<ProductVariantResponseDTO>))]
-        public async Task<IActionResult> GetPriceProductVariantById(string id)
-        {
-            var result = await _mediator.Send(new GetPriceProductVariantByIdQuery() { Id = id });
-            return Ok(result);
-        }
-
-        [HttpPost("Create")]
-        [ProducesDefaultResponseType(typeof(int))]
-        public async Task<ActionResult<int>> CreateProductVariant([FromBody] CreateProductVariantCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
-
-        [HttpDelete("delete/{id}")]
-        [ProducesDefaultResponseType(typeof(int))]
-        public async Task<IActionResult> DeleteProductVariant(string id)
-        {
-            var result = await _mediator.Send(new DeleteProductVariantCommand() { Id = id });
-            return Ok(result);
-        }
-
-        [HttpPut("Edit/{id}")]
-        [ProducesDefaultResponseType(typeof(int))]
-        public async Task<ActionResult> EditProductVariant(string id, [FromBody] UpdateProductVariantCommand command)
-        {
-
-            if (id == command.Id)
-            {
-                var result = await _mediator.Send(command);
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new DeleteProductVariantCommand { Id = id }, cancellationToken);
+        return NoContent();
     }
 }
