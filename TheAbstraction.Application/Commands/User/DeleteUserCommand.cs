@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using TheAbstraction.Application.Common.Exceptions;
-using TheAbstraction.Application.Common.Interfaces;
+using TheAbstraction.Application.Common.Interfaces.Auth;
 
 namespace TheAbstraction.Application.Commands.User
 {

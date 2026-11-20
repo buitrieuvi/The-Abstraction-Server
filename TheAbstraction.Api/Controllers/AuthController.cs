@@ -1,7 +1,7 @@
-﻿using TheAbstraction.Application.DTOs;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TheAbstraction.Application.Commands.Auth;
+using TheAbstraction.Application.DTOs.Auth;
 
 namespace TheAbstraction.Api.Controllers
 {

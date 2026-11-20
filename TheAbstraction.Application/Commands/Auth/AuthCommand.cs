@@ -1,7 +1,8 @@
 ﻿using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.Common.Interfaces;
-using TheAbstraction.Application.DTOs;
 using MediatR;
+using TheAbstraction.Application.Common.Interfaces.Auth;
+using TheAbstraction.Application.DTOs.Auth;
 
 
 

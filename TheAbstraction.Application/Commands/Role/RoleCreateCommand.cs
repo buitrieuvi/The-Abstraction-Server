@@ -1,5 +1,5 @@
-﻿using TheAbstraction.Application.Common.Interfaces;
-using MediatR;
+﻿using MediatR;
+using TheAbstraction.Application.Common.Interfaces.Auth;
 
 
 namespace TheAbstraction.Application.Commands.Role
