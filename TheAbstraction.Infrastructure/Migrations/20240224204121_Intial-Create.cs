@@ -10,7 +10,7 @@ namespace Naxxum.JobyHunter.Authentication.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(File.ReadAllText("Migrations/database.sql"));
+            migrationBuilder.Sql(File.ReadAllText("Migrations/Authentication.sql"));
             // migrationBuilder.CreateTable(
             //     name: "AspNetRoles",
             //     columns: table => new
