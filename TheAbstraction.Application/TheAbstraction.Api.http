@@ -1,0 +1,25 @@
+
+@TheAbstraction.Api_HostAddress = http://localhost:5152
+@roleId = ""
+
+GET https://localhost:7219/api/Product/GetAll
+Accept: application/json
+
+GET {{TheAbstraction.Api_HostAddress}}/api/inventory/get
+
+###
+
+GET {{TheAbstraction.Api_HostAddress}}/api/role/get
+
+###
+
+### 5. DELETE - Xóa Role
+DELETE {{TheAbstraction.Api_HostAddress}}/api/role/delete
+Content-Type: application/json
+Accept: application/json
+
+{
+    "roleId": "{{roleId}}"
+}
+
+###
