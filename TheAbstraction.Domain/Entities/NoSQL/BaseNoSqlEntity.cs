@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace TheAbstraction.Domain.Entities.NoSQL
 {
-    public class BaseEntityNoSQL
+    public class BaseNoSqlEntity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

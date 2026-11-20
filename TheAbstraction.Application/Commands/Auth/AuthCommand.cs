@@ -32,7 +32,7 @@ namespace TheAbstraction.Application.Commands.Auth
 
             var (userId, fullName, userName, email, roles) = await _identityService.GetUserDetailsAsync(await _identityService.GetUserIdAsync(request.UserName));
 
-            string token = _tokenGenerator.GenerateJWTToken((userId, userName, roles));
+            string token = _tokenGenerator.GenerateJwtToken((userId, userName, roles));
 
             return new AuthResponseDTO()
             {

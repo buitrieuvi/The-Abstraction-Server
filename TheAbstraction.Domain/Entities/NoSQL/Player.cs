@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using TheAbstraction.Domain.Entities.NoSQL;
 
 namespace TheAbstraction.Domain.Entities.NoSQL
 {
-    public class Player : BaseEntityNoSQL
+    public class Player : BaseNoSqlEntity
     {
         public ObjectId UserId { get; set; }
         public string PlayerName { get; set; }
