@@ -1,11 +1,11 @@
-﻿using TheAbstraction.Application.Common.Interfaces;
-using TheAbstraction.Application.DTOs;
-using MediatR;
+﻿using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TheAbstraction.Application.Common.Interfaces.Auth;
+using TheAbstraction.Application.DTOs.Role;
 
 namespace TheAbstraction.Application.Queries.Role
 {

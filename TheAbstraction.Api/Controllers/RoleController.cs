@@ -1,10 +1,10 @@
-﻿using TheAbstraction.Application.DTOs;
-using TheAbstraction.Application.Queries.Role;
+﻿using TheAbstraction.Application.Queries.Role;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TheAbstraction.Application.Commands.Role;
+using TheAbstraction.Application.DTOs.Role;
 
 
 namespace TheAbstraction.Api.Controllers

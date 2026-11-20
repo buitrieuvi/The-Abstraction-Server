@@ -3,13 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TheAbstraction.Application.Common.Interfaces;
+using TheAbstraction.Application.Common.Interfaces.Auth;
 using TheAbstraction.Domain.Repositories.Command.Base;
 using TheAbstraction.Domain.Repositories.Query.Base;
 using TheAbstraction.Infrastructure.Data;
 using TheAbstraction.Infrastructure.Identity;
 using TheAbstraction.Infrastructure.Repository.Command.Base;
 using TheAbstraction.Infrastructure.Repository.Query.Base;
-using TheAbstraction.Infrastructure.Services;
+using TheAbstraction.Infrastructure.Services.User;
 
 namespace TheAbstraction.Infrastructure
 {
@@ -46,10 +47,6 @@ namespace TheAbstraction.Infrastructure
             });
 
             services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IProductVariantService, ProductVariantService>();
-            services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IOrderDetailService, OrderDetailService>();
 
             services.AddScoped(typeof(IQueryRepository<>), typeof(QueryRepository<>));
             services.AddScoped(typeof(ICommandRepository<>), typeof(CommandRepository<>));

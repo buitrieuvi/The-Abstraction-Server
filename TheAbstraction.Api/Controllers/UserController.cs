@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using TheAbstraction.Application.Commands.User;
 using TheAbstraction.Application.Common.Exceptions;
-using TheAbstraction.Application.DTOs;
+using TheAbstraction.Application.DTOs.User;
 using TheAbstraction.Application.Queries.User;
 
 

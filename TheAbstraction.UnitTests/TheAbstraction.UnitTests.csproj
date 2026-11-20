@@ -31,7 +31,6 @@
     <ProjectReference Include="..\TheAbstraction.Domain\TheAbstraction.Domain.csproj" />
     <ProjectReference Include="..\TheAbstraction.Infrastructure\TheAbstraction.Infrastructure.csproj" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup Condition="$(VisualStudioVersion) == '18.0'">
     <Reference Include="Microsoft.Data.Tools.Schema.Sql, Version=16.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>$(SSDTPath)\Microsoft.Data.Tools.Schema.Sql.dll</HintPath>

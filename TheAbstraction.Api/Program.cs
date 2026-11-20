@@ -9,11 +9,13 @@ using System.Text;
 using TheAbstraction.Api.Middleware;
 using TheAbstraction.Application;
 using TheAbstraction.Application.Common.Interfaces;
+using TheAbstraction.Application.Common.Interfaces.Auth;
 using TheAbstraction.Domain.Repositories.Command.Base;
 using TheAbstraction.Infrastructure;
 using TheAbstraction.Infrastructure.Data;
 using TheAbstraction.Infrastructure.Repository.Command.Base;
 using TheAbstraction.Infrastructure.Services;
+using TheAbstraction.Infrastructure.Services.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,11 +29,6 @@ var key = builder.Configuration["Jwt:Key"]
 var issuer = builder.Configuration["Jwt:Issuer"];
 var audience = builder.Configuration["Jwt:Audience"];
 var expiryMinutes = builder.Configuration["Jwt:ExpiryMinutes"];
-
-// MongoDB Configuration
-builder.Services.Configure<TheAbstraction.Infrastructure.Data.MongoDatabaseSettings>(
-    builder.Configuration.GetSection("MongoDatabaseSettings")
-);
 
 builder.Services.AddSingleton<IMongoClient>(_ =>
 {
@@ -80,11 +77,6 @@ builder.Services.AddSingleton<ITokenGenerator>(
     new TokenGenerator(key, issuer, audience, expiryMinutes)
 );
 
-// Application Services
-builder.Services.AddSingleton<IPlayerService, PlayerService>();
-builder.Services.AddSingleton<IItemService, ItemService>();
-builder.Services.AddSingleton<IInventoryService, InventoryService>();
-
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -103,9 +95,6 @@ builder.Services.AddCors(options =>
 
 // Dependency Injection
 builder.Services.AddHttpContextAccessor();
-
-builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 
 builder.Services.AddScoped(
