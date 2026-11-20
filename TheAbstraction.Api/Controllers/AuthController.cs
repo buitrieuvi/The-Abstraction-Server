@@ -5,7 +5,7 @@ using TheAbstraction.Application.DTOs.Auth;
 
 namespace TheAbstraction.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class AuthController(IMediator mediator) : ControllerBase
     {

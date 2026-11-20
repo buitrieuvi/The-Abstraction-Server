@@ -10,7 +10,7 @@ namespace TheAbstraction.Application.Commands.User
 {
     public class UpdateUserRolesCommand : IRequest<int>
     {
-        public string userName { get; set; }
+        public string UserId { get; set; }
         public IList<string> Roles { get; set; }
     }
 
@@ -20,7 +20,8 @@ namespace TheAbstraction.Application.Commands.User
 
         public async Task<int> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
         {
-            var result = await _identityService.UpdateUsersRole(request.userName, request.Roles);
+            var userName = await _identityService.GetUserNameAsync(request.UserId);
+            var result = await _identityService.UpdateUsersRole(userName, request.Roles);
             return result ? 1 : 0;
         }
     }
