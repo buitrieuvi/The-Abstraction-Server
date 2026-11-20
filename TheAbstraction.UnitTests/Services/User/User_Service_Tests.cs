@@ -1,101 +1,104 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using System.Net.Http.Json;
-using TheAbstraction.Application.Commands.Auth;
+using Microsoft.AspNetCore.Http;
+using Moq;
+using System.Security.Claims;
+using TheAbstraction.Application.Commands.User;
+using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.Common.Interfaces.Auth;
-using TheAbstraction.Application.DTOs.Auth;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace TheAbstraction.UnitTests.Services.User;
-    public class User_Service_Tests : IClassFixture<CustomWebApplicationFactory>
+
+public class User_Service_Tests
 {
-    private readonly IServiceProvider _provider;
-    private readonly HttpClient _client;
-    private readonly ITestOutputHelper _output;
-    private readonly IMapper _mapper;
-
-    public User_Service_Tests(CustomWebApplicationFactory factory, ITestOutputHelper output)
-    {
-        _provider = factory.Services;
-        _client = factory.CreateClient();
-        _output = output;
-    }
-
     [Fact]
-    public async Task Create_Roles() 
+    public async Task CreateUser_ReturnsNewUserId()
     {
-        using var scope = _provider.CreateScope();
-        var service = scope.ServiceProvider.GetRequiredService<IIdentityService>();
+        var identityService = new Mock<IIdentityService>();
+        identityService
+            .Setup(service => service.CreateUserAsync(
+                "new-user", "password", "new@example.com", "New User", It.IsAny<List<string>>()))
+            .ReturnsAsync((true, "user-id"));
+        var handler = new CreateUserCommandHandler(identityService.Object);
 
-        await service.CreateRoleAsync("user");
-        await service.CreateRoleAsync("admin");
-    }
-
-    [Fact]
-    public async Task Get_All_Roles()
-    {
-        using var scope = _provider.CreateScope();
-        var service = scope.ServiceProvider.GetRequiredService<IIdentityService>();
-
-        var resutl = await service.GetRolesAsync();
-
-        string pretty = JsonConvert.SerializeObject(resutl, Formatting.Indented);
-        _output.WriteLine(pretty);
-    }
-
-    [Fact]
-    public async Task Get_All_User_Details()
-    {
-        using var scope = _provider.CreateScope();
-        var service = scope.ServiceProvider.GetRequiredService<IIdentityService>();
-
-        var resutl = await service.GetAllUsersDetailsAsync();
-
-        string pretty = JsonConvert.SerializeObject(resutl, Formatting.Indented);
-        _output.WriteLine(pretty);
-    }
-
-    [Fact]
-    public async Task Create_User()
-    {
-        using var scope = _provider.CreateScope();
-        var service = scope.ServiceProvider.GetRequiredService<IIdentityService>();
-
-        var resutl = await service.CreateUserAsync(
-            "buitrieuvi",
-            "vi2000",
-            "btv2000@gmail.com",
-            "Bùi Triều Vĩ",
-            new List<string>() 
-            {
-                "user", "admin"
-            });
-
-        string pretty = JsonConvert.SerializeObject(resutl, Formatting.Indented);
-        _output.WriteLine(pretty);
-    }
-
-    [Fact]
-    public async Task Login_User()
-    {
-        //using var scope = _provider.CreateScope();
-        //var service = scope.ServiceProvider.GetRequiredService<IIdentityService>();
-
-        //var resutl = await service.SigninUserAsync("buitrieuvi", "vi2000");
-
-        var response = await _client.PostAsJsonAsync("api/auth/login", new AuthCommand
+        var userId = await handler.Handle(new CreateUserCommand
         {
-            UserName = "buitrieuvi",
-            Password = "vi2000"
-        });
+            UserName = "new-user",
+            Password = "password",
+            ConfirmationPassword = "password",
+            Email = "new@example.com",
+            FullName = "New User",
+            Roles = ["user"]
+        }, CancellationToken.None);
 
-        response.EnsureSuccessStatusCode();
+        Assert.Equal("user-id", userId);
+        identityService.VerifyAll();
+    }
 
-        var dto = await response.Content.ReadFromJsonAsync<AuthResponseDTO>();
+    [Fact]
+    public async Task CreateUser_ThrowsWhenPasswordsDoNotMatch()
+    {
+        var identityService = new Mock<IIdentityService>();
+        var handler = new CreateUserCommandHandler(identityService.Object);
 
-        var pretty = JsonConvert.SerializeObject(dto, Formatting.Indented);
-        _output.WriteLine(pretty);
+        await Assert.ThrowsAsync<BadRequestException>(() => handler.Handle(new CreateUserCommand
+        {
+            UserName = "new-user",
+            Password = "password",
+            ConfirmationPassword = "different-password",
+            Email = "new@example.com",
+            FullName = "New User"
+        }, CancellationToken.None));
+
+        identityService.Verify(service => service.CreateUserAsync(
+            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<string>>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task UpdateUserRoles_ResolvesUserIdAndReplacesRoles()
+    {
+        var identityService = new Mock<IIdentityService>();
+        identityService.Setup(service => service.GetUserNameAsync("user-id")).ReturnsAsync("new-user");
+        identityService.Setup(service => service.UpdateUsersRole("new-user", It.Is<IList<string>>(roles => roles.SequenceEqual(new[] { "admin" }))))
+            .ReturnsAsync(true);
+        var handler = new UpdateUserRolesCommandHandler(identityService.Object);
+
+        var result = await handler.Handle(new UpdateUserRolesCommand
+        {
+            UserId = "user-id",
+            Roles = ["admin"]
+        }, CancellationToken.None);
+
+        Assert.Equal(1, result);
+        identityService.VerifyAll();
+    }
+
+    [Fact]
+    public async Task DeleteUser_ThrowsWhenRequestHasNoAuthenticatedUser()
+    {
+        var identityService = new Mock<IIdentityService>();
+        var contextAccessor = new HttpContextAccessor { HttpContext = new DefaultHttpContext() };
+        var handler = new DeleteUserCommandHandler(identityService.Object, contextAccessor);
+
+        await Assert.ThrowsAsync<ForbiddenAccessException>(() => handler.Handle(
+            new DeleteUserCommand { UserId = "user-id" }, CancellationToken.None));
+
+        identityService.Verify(service => service.DeleteUserAsync(It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task DeleteUser_AllowsUserToDeleteOwnAccount()
+    {
+        var identityService = new Mock<IIdentityService>();
+        identityService.Setup(service => service.GetUserRolesAsync("user-id")).ReturnsAsync([]);
+        identityService.Setup(service => service.DeleteUserAsync("user-id")).ReturnsAsync(true);
+        var principal = new ClaimsPrincipal(new ClaimsIdentity(
+            [new Claim(ClaimTypes.NameIdentifier, "user-id")], "test"));
+        var contextAccessor = new HttpContextAccessor { HttpContext = new DefaultHttpContext { User = principal } };
+        var handler = new DeleteUserCommandHandler(identityService.Object, contextAccessor);
+
+        var result = await handler.Handle(new DeleteUserCommand { UserId = "user-id" }, CancellationToken.None);
+
+        Assert.Equal(1, result);
+        identityService.VerifyAll();
     }
 }
