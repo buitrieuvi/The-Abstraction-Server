@@ -7,15 +7,15 @@ using System.Text;
 
 namespace TheAbstraction.Infrastructure.Services
 {
-    public class TokenGenerator(string key, string issueer, string audience, string expiryMinutes) : ITokenGenerator
+    public class TokenGenerator(string key, string issuer, string audience, string expiryMinutes) : ITokenGenerator
     {
 
         private readonly string _key = key;
-        private readonly string _issuer = issueer;
+        private readonly string _issuer = issuer;
         private readonly string _audience = audience;
         private readonly string _expiryMinutes = expiryMinutes;
 
-        public string GenerateJWTToken((string userId, string userName, IList<string> roles) userDetails)
+        public string GenerateJwtToken((string userId, string userName, IList<string> roles) userDetails)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

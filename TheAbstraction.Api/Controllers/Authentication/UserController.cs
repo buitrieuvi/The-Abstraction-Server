@@ -4,7 +4,7 @@ using TheAbstraction.Application.Commands.User;
 using TheAbstraction.Application.DTOs.User;
 using TheAbstraction.Application.Queries.User;
 
-namespace TheAbstraction.Api.Controllers;
+namespace TheAbstraction.Api.Controllers.Authentication;
 
 [Route("api/v1/users")]
 [ApiController]

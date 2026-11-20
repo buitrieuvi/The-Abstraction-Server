@@ -11,7 +11,7 @@ namespace TheAbstraction.Api.Controllers;
 public class RoleController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> CreateRole([FromBody] RoleCreateCommand command)
+    public async Task<IActionResult> CreateRole([FromBody] CreateRoleCommand command)
     {
         var result = await mediator.Send(command);
         return result > 0 ? StatusCode(StatusCodes.Status201Created) : BadRequest();
