@@ -1,105 +1,64 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using TheAbstraction.Application.Commands.User;
-using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.DTOs.User;
 using TheAbstraction.Application.Queries.User;
 
+namespace TheAbstraction.Api.Controllers;
 
-namespace TheAbstraction.Api.Controllers
+[Route("api/v1/users")]
+[ApiController]
+public class UserController(IMediator mediator) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    //[Authorize(Roles = "Admin, Management")]
-    public class UserController(IMediator mediator) : ControllerBase
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand command)
     {
-        private readonly IMediator _mediator = mediator;
+        var result = await mediator.Send(command);
+        return CreatedAtAction(nameof(GetUserDetails), new { id = result }, new { id = result });
+    }
 
-        [HttpPost("create")]
-        [ProducesDefaultResponseType(typeof(int))]
-        public async Task<ActionResult> CreateUser(CreateUserCommand command)
+    [HttpGet]
+    [ProducesResponseType(typeof(List<UserDetailsResponseDTO>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllUsers([FromQuery] string? userName)
+    {
+        if (!string.IsNullOrWhiteSpace(userName))
         {
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            var user = await mediator.Send(new GetUserDetailsByUserNameQuery { UserName = userName });
+            return Ok(user);
         }
 
-        [HttpGet("get")]
-        [ProducesDefaultResponseType(typeof(List<UserResponseDTO>))]
-        public async Task<IActionResult> GetAllUserAsync()
-        {
-            var result = await _mediator.Send(new GetUserQuery());
-            return Ok(result);
-        }
+        return Ok(await mediator.Send(new GetAllUsersDetailsQuery()));
+    }
 
-        [HttpDelete("delete")]
-        [ProducesDefaultResponseType(typeof(int))]
-        public async Task<IActionResult> DeleteUser([FromBody] DeleteUserCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(UserDetailsResponseDTO), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserDetails(string id)
+    {
+        var result = await mediator.Send(new GetUserDetailsQuery { UserId = id });
+        return Ok(result);
+    }
 
-        [HttpGet("getUserDetails/{userId}")]
-        [ProducesDefaultResponseType(typeof(UserDetailsResponseDTO))]
-        public async Task<IActionResult> GetUserDetails(string userId)
-        {
-            var result = await _mediator.Send(new GetUserDetailsQuery() { UserId = userId });
-            return Ok(result);
-        }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUser(string id, [FromBody] EditUserProfileCommand command)
+    {
+        command.Id = id;
+        var result = await mediator.Send(command);
+        return result > 0 ? NoContent() : NotFound();
+    }
 
-        [HttpGet("getUserDetailsByUserName/{userName}")]
-        [ProducesDefaultResponseType(typeof(UserDetailsResponseDTO))]
-        public async Task<IActionResult> GetUserDetailsByUserName(string userName)
-        {
-            var result = await _mediator.Send(new GetUserDetailsByUserNameQuery() { UserName = userName });
-            return Ok(result);
-        }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUser(string id)
+    {
+        var result = await mediator.Send(new DeleteUserCommand { UserId = id });
+        return result > 0 ? NoContent() : NotFound();
+    }
 
-        [HttpPost("assignRoles")]
-        [ProducesDefaultResponseType(typeof(int))]
-        public async Task<ActionResult> AssignRoles(AssignUsersRoleCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
-
-        [HttpPut("editUserRoles")]
-        [ProducesDefaultResponseType(typeof(int))]
-
-        public async Task<ActionResult> EditUserRoles(UpdateUserRolesCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
-
-        [HttpGet("getAlluserDetails")]
-        [ProducesDefaultResponseType(typeof(UserDetailsResponseDTO))]
-        public async Task<IActionResult> GetAllUserDetails()
-        {
-            var result = await _mediator.Send(new GetAllUsersDetailsQuery());
-            return Ok(result);
-        }
-
-
-        [HttpPut("editUserProfile/{id}")]
-        [ProducesDefaultResponseType(typeof(int))]
-        public async Task<ActionResult> EditUserProfile(string id, [FromBody] EditUserProfileCommand command)
-        {
-            if (id == command.Id)
-            {
-                return Ok(await _mediator.Send(command));
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-
+    [HttpPut("{id}/roles")]
+    public async Task<IActionResult> UpdateUserRoles(string id, [FromBody] UpdateUserRolesCommand command)
+    {
+        command.UserId = id;
+        var result = await mediator.Send(command);
+        return result > 0 ? NoContent() : NotFound();
     }
 }

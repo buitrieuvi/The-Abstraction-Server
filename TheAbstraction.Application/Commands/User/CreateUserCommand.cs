@@ -8,7 +8,7 @@ using TheAbstraction.Application.Common.Interfaces.Auth;
 
 namespace TheAbstraction.Application.Commands.User
 {
-    public class CreateUserCommand : IRequest<int>
+    public class CreateUserCommand : IRequest<string>
     {
         public string FullName { get; set; }
         public string UserName { get; set; }
@@ -18,11 +18,11 @@ namespace TheAbstraction.Application.Commands.User
         public List<string> Roles { get; set; }
     }
 
-    public class CreateUserCommandHandler(IIdentityService identityService) : IRequestHandler<CreateUserCommand, int>
+    public class CreateUserCommandHandler(IIdentityService identityService) : IRequestHandler<CreateUserCommand, string>
     {
         private readonly IIdentityService _identityService = identityService;
 
-        public async Task<int> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             if (request.Password != request.ConfirmationPassword)
             {
@@ -30,7 +30,7 @@ namespace TheAbstraction.Application.Commands.User
             }
 
             var result = await _identityService.CreateUserAsync(request.UserName, request.Password, request.Email, request.FullName, request.Roles);
-            return result.isSucceed ? 1 : 0;
+            return result.userId;
         }
     }
 }
