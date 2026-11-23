@@ -20,7 +20,8 @@ namespace TheAbstraction.Infrastructure.Data
 
         public IDbConnection CreateConnection()
         {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            string connectionString = _configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("DefaultConnection is missing.");
             return new SqlConnection(connectionString);
         }
     }

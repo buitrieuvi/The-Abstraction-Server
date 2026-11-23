@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using TheAbstraction.Application.DTOs.Auth;
 using TheAbstraction.Application.DTOs.User;
 using TheAbstraction.Domain.Entities;
-using TheAbstraction.Domain.Entities.NoSQL.Inventory;
 
 namespace TheAbstraction.Application.Mapper
 {
