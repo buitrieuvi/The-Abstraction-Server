@@ -26,9 +26,12 @@ builder.Services.AddControllers();
 var key = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("Jwt:Key is missing.");
 
-var issuer = builder.Configuration["Jwt:Issuer"];
-var audience = builder.Configuration["Jwt:Audience"];
-var expiryMinutes = builder.Configuration["Jwt:ExpiryMinutes"];
+var issuer = builder.Configuration["Jwt:Issuer"]
+    ?? throw new InvalidOperationException("Jwt:Issuer is missing.");
+var audience = builder.Configuration["Jwt:Audience"]
+    ?? throw new InvalidOperationException("Jwt:Audience is missing.");
+var expiryMinutes = builder.Configuration["Jwt:ExpiryMinutes"]
+    ?? throw new InvalidOperationException("Jwt:ExpiryMinutes is missing.");
 
 builder.Services.AddSingleton<IMongoClient>(_ =>
 {

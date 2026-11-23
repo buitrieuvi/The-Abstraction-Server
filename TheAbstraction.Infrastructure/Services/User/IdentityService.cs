@@ -106,7 +106,7 @@ namespace TheAbstraction.Infrastructure.Services.User
                 x.Email
             }).ToListAsync();
 
-            return users.Select(user => (user.Id, user.FullName, user.UserName, user.Email)).ToList();
+            return users.Select(user => (user.Id, user.FullName, user.UserName ?? string.Empty, user.Email ?? string.Empty)).ToList();
         }
 
         public async Task<List<(string id, string userName, string email, IList<string> roles)>> GetAllUsersDetailsAsync()
@@ -136,21 +136,21 @@ namespace TheAbstraction.Infrastructure.Services.User
                 x.Name
             }).ToListAsync();
 
-            return roles.Select(role => (role.Id, role.Name)).ToList();
+            return roles.Select(role => (role.Id, role.Name ?? string.Empty)).ToList();
         }
 
         public async Task<(string userId, string fullName, string UserName, string email, IList<string> roles)> GetUserDetailsAsync(string userId)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId) ?? throw new NotFoundException("User not found");
             var roles = await _userManager.GetRolesAsync(user);
-            return (user.Id, user.FullName, user.UserName, user.Email, roles);
+            return (user.Id, user.FullName, user.UserName ?? string.Empty, user.Email ?? string.Empty, roles);
         }
 
         public async Task<(string userId, string fullName, string UserName, string email, IList<string> roles)> GetUserDetailsByUserNameAsync(string userName)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName) ?? throw new NotFoundException("User not found");
             var roles = await _userManager.GetRolesAsync(user);
-            return (user.Id, user.FullName, user.UserName, user.Email, roles);
+            return (user.Id, user.FullName, user.UserName ?? string.Empty, user.Email ?? string.Empty, roles);
         }
 
         public async Task<string> GetUserIdAsync(string userName)
@@ -162,7 +162,7 @@ namespace TheAbstraction.Infrastructure.Services.User
         public async Task<string> GetUserNameAsync(string userId)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId) ?? throw new NotFoundException("User not found");
-            return await _userManager.GetUserNameAsync(user);
+            return user.UserName ?? string.Empty;
         }
 
         public async Task<List<string>> GetUserRolesAsync(string userId)
@@ -202,7 +202,7 @@ namespace TheAbstraction.Infrastructure.Services.User
         public async Task<(string id, string roleName)> GetRoleByIdAsync(string id)
         {
             var role = await _roleManager.FindByIdAsync(id) ?? throw new NotFoundException("Role not found");
-            return (role.Id, role.Name);
+            return (role.Id, role.Name ?? string.Empty);
         }
 
         public async Task<bool> UpdateRole(string id, string roleName)
