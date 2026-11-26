@@ -6,7 +6,7 @@ Backend API xây dựng bằng ASP.NET Core 8, hiện tập trung vào đăng nh
 
 - .NET 8 / ASP.NET Core Web API
 - ASP.NET Core Identity
-- Entity Framework Core 8 và SQL Server
+- Entity Framework Core 8 và SQLite
 - MediatR (CQRS), AutoMapper
 - JWT Bearer Authentication
 - Swagger / Swashbuckle
@@ -19,11 +19,11 @@ Backend API xây dựng bằng ASP.NET Core 8, hiện tập trung vào đăng nh
 TheAbstraction.Api             HTTP controllers, middleware, cấu hình ứng dụng
 TheAbstraction.Application     Commands, queries, DTOs, interfaces
 TheAbstraction.Domain          Entities và repository interfaces
-TheAbstraction.Infrastructure Identity, EF Core, SQL Server, repositories
+TheAbstraction.Infrastructure Identity, EF Core, SQLite, repositories
 TheAbstraction.UnitTests       Kiểm thử
 ```
 
-Luồng xử lý chính: HTTP request → Controller → MediatR command/query → dịch vụ Identity/repository → SQL Server.
+Luồng xử lý chính: HTTP request → Controller → MediatR command/query → dịch vụ Identity/repository → SQLite.
 
 ## Chức năng hiện có
 
@@ -117,7 +117,7 @@ Các thuộc tính `[Authorize]` trên controller vẫn đang bị comment. Cầ
 
 ## Chạy dự án
 
-Yêu cầu .NET 8 SDK và SQL Server/LocalDB.
+Yêu cầu .NET 8 SDK. Cơ sở dữ liệu SQLite được lưu trong `TheAbstraction.Api/MyDatabase.db`.
 
 1. Cập nhật `ConnectionStrings:DefaultConnection` trong User Secrets hoặc cấu hình môi trường.
 2. Cung cấp cấu hình JWT `Jwt:Key`, `Jwt:Issuer`, `Jwt:Audience` và `Jwt:ExpiryMinutes` bằng User Secrets hoặc biến môi trường (`Jwt__Key`, `Jwt__Issuer`, `Jwt__Audience`, `Jwt__ExpiryMinutes`). Dùng khóa riêng đủ mạnh; không commit bí mật.
@@ -128,7 +128,7 @@ dotnet restore The-Abstraction-Server.sln
 dotnet run --project TheAbstraction.Api
 ```
 
-Trong môi trường Development, Swagger UI ở `/swagger`. API tự gọi EF Core `MigrateAsync()` khi khởi động nên database cần truy cập được và migration phải hiện diện.
+Trong môi trường Development, Swagger UI ở `/swagger`. API tự tạo schema SQLite từ EF Core model khi khởi động nếu database chưa tồn tại.
 
 > `Program.cs` hiện cũng đăng ký `MongoClient` và yêu cầu `MongoDatabaseSettings:ConnectionString` khi khởi động. Hãy cấu hình giá trị này nếu vẫn giữ đăng ký MongoDB; nếu không dùng MongoDB, có thể gỡ đăng ký để tránh phụ thuộc cấu hình không cần thiết.
 

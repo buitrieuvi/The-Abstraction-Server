@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -20,8 +20,9 @@ namespace TheAbstraction.Infrastructure.Data
 
         public IDbConnection CreateConnection()
         {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            return new SqlConnection(connectionString);
+            string connectionString = _configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("DefaultConnection is missing.");
+            return new SqliteConnection(connectionString);
         }
     }
 }
