@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MongoDB.Bson;
 using TheAbstraction.Application.Common.Exceptions;
 using TheAbstraction.Application.Common.Interfaces.Auth;
 using TheAbstraction.Infrastructure.Identity;
@@ -33,7 +32,7 @@ namespace TheAbstraction.Infrastructure.Services.User
         public async Task<bool> CreateRoleAsync(string roleName)
         {
             var newRole = new IdentityRole(roleName);
-            newRole.Id = ObjectId.GenerateNewId().ToString();
+            newRole.Id = Guid.NewGuid().ToString();
             var result = await _roleManager.CreateAsync(newRole);
             if (!result.Succeeded)
             {
@@ -48,7 +47,7 @@ namespace TheAbstraction.Infrastructure.Services.User
         {
             var user = new ApplicationUser()
             {
-                Id = ObjectId.GenerateNewId().ToString(),
+                Id = Guid.NewGuid().ToString(),
                 FullName = fullName,
                 UserName = userName,
                 Email = email

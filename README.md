@@ -10,7 +10,6 @@ Backend API xây dựng bằng ASP.NET Core 8, hiện tập trung vào đăng nh
 - MediatR (CQRS), AutoMapper
 - JWT Bearer Authentication
 - Swagger / Swashbuckle
-- MongoDB.Driver được tham chiếu trong dự án; các endpoint nghiệp vụ MongoDB chưa được triển khai trong API hiện tại.
 - xUnit
 
 ## Kiến trúc
@@ -117,6 +116,8 @@ Các thuộc tính `[Authorize]` trên controller vẫn đang bị comment. Cầ
 
 ## Chạy dự án
 
+Quy ước nhánh, commit và pull request nằm trong [GIT_WORKFLOW.md](GIT_WORKFLOW.md).
+
 Yêu cầu .NET 8 SDK. Cơ sở dữ liệu SQLite được lưu trong `TheAbstraction.Api/MyDatabase.db`.
 
 1. Cập nhật `ConnectionStrings:DefaultConnection` trong User Secrets hoặc cấu hình môi trường.
@@ -130,7 +131,6 @@ dotnet run --project TheAbstraction.Api
 
 Trong môi trường Development, Swagger UI ở `/swagger`. API tự tạo schema SQLite từ EF Core model khi khởi động nếu database chưa tồn tại.
 
-> `Program.cs` hiện cũng đăng ký `MongoClient` và yêu cầu `MongoDatabaseSettings:ConnectionString` khi khởi động. Hãy cấu hình giá trị này nếu vẫn giữ đăng ký MongoDB; nếu không dùng MongoDB, có thể gỡ đăng ký để tránh phụ thuộc cấu hình không cần thiết.
 
 ## Kiểm thử
 
