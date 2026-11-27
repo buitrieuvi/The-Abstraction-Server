@@ -1,0 +1,32 @@
+<main class="page">
+  <section class="intro">
+    <p class="eyebrow">VÍ DỤ ANGULAR · HTTP</p>
+    <h1>Bài viết mới nhất</h1>
+    <p class="description">Dữ liệu được lấy trực tiếp từ JSONPlaceholder API.</p>
+  </section>
+
+  <section class="posts" aria-live="polite">
+    @if (loading()) {
+      <p class="notice">Đang tải bài viết…</p>
+    } @else if (error()) {
+      <div class="notice error">
+        <p>{{ error() }}</p>
+        <button type="button" (click)="loadPosts()">Thử lại</button>
+      </div>
+    } @else {
+      <div class="toolbar">
+        <span>{{ posts().length }} bài viết</span>
+        <button type="button" (click)="loadPosts()">Tải lại</button>
+      </div>
+      <div class="post-list">
+        @for (post of posts(); track post.id) {
+          <article class="post-card">
+            <span class="post-id">BÀI VIẾT {{ post.id }}</span>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.body }}</p>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</main>
